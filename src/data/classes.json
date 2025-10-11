@@ -1,0 +1,110 @@
+[
+  {
+    "id": "fighter",
+    "name": "Fighter",
+    "hitDie": 10,
+    "baseAC": 16,
+    "description": "A master of martial combat, skilled with a variety of weapons and armor",
+    "primaryStat": "Strength",
+    "armorType": "Heavy"
+  },
+  {
+    "id": "wizard",
+    "name": "Wizard",
+    "hitDie": 6,
+    "baseAC": 12,
+    "description": "A scholarly magic-user capable of manipulating reality through arcane spells",
+    "primaryStat": "Intelligence",
+    "armorType": "None"
+  },
+  {
+    "id": "rogue",
+    "name": "Rogue",
+    "hitDie": 8,
+    "baseAC": 14,
+    "description": "A scoundrel who uses stealth and trickery to overcome obstacles and enemies",
+    "primaryStat": "Dexterity",
+    "armorType": "Light"
+  },
+  {
+    "id": "cleric",
+    "name": "Cleric",
+    "hitDie": 8,
+    "baseAC": 16,
+    "description": "A priestly champion who wields divine magic in service of a higher power",
+    "primaryStat": "Wisdom",
+    "armorType": "Medium"
+  },
+  {
+    "id": "ranger",
+    "name": "Ranger",
+    "hitDie": 10,
+    "baseAC": 14,
+    "description": "A warrior who uses martial prowess and nature magic to combat threats",
+    "primaryStat": "Dexterity",
+    "armorType": "Medium"
+  },
+  {
+    "id": "paladin",
+    "name": "Paladin",
+    "hitDie": 10,
+    "baseAC": 18,
+    "description": "A holy warrior bound to a sacred oath, combining martial might and divine magic",
+    "primaryStat": "Strength",
+    "armorType": "Heavy"
+  },
+  {
+    "id": "barbarian",
+    "name": "Barbarian",
+    "hitDie": 12,
+    "baseAC": 14,
+    "description": "A fierce warrior who can enter a battle rage for devastating power",
+    "primaryStat": "Strength",
+    "armorType": "Medium"
+  },
+  {
+    "id": "bard",
+    "name": "Bard",
+    "hitDie": 8,
+    "baseAC": 13,
+    "description": "An inspiring magician whose power echoes the music of creation",
+    "primaryStat": "Charisma",
+    "armorType": "Light"
+  },
+  {
+    "id": "druid",
+    "name": "Druid",
+    "hitDie": 8,
+    "baseAC": 13,
+    "description": "A priest of nature, wielding the powers of the wild and adopting animal forms",
+    "primaryStat": "Wisdom",
+    "armorType": "Medium"
+  },
+  {
+    "id": "monk",
+    "name": "Monk",
+    "hitDie": 8,
+    "baseAC": 15,
+    "description": "A master of martial arts, harnessing the power of ki to perform superhuman feats",
+    "primaryStat": "Dexterity",
+    "armorType": "None"
+  },
+  {
+    "id": "sorcerer",
+    "name": "Sorcerer",
+    "hitDie": 6,
+    "baseAC": 12,
+    "description": "A spellcaster who draws on inherent magic from a gift or bloodline",
+    "primaryStat": "Charisma",
+    "armorType": "None"
+  },
+  {
+    "id": "warlock",
+    "name": "Warlock",
+    "hitDie": 8,
+    "baseAC": 13,
+    "description": "A wielder of magic derived from a bargain with an otherworldly entity",
+    "primaryStat": "Charisma",
+    "armorType": "Light"
+  }
+]

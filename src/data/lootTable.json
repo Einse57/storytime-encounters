@@ -1,0 +1,52 @@
+{
+  "common": [
+    { "name": "Copper coins (2d6)", "type": "currency", "rarity": "common" },
+    { "name": "Dagger", "type": "weapon", "rarity": "common" },
+    { "name": "Leather scraps", "type": "material", "rarity": "common" },
+    { "name": "Rusty shortsword", "type": "weapon", "rarity": "common" },
+    { "name": "Broken shield", "type": "armor", "rarity": "common" },
+    { "name": "Rations (1 day)", "type": "consumable", "rarity": "common" },
+    { "name": "Torch", "type": "equipment", "rarity": "common" },
+    { "name": "Rope (10 ft)", "type": "equipment", "rarity": "common" }
+  ],
+  "humanoid": [
+    { "name": "Silver coins (1d10)", "type": "currency", "rarity": "common" },
+    { "name": "Shortsword", "type": "weapon", "rarity": "common" },
+    { "name": "Leather armor", "type": "armor", "rarity": "common" },
+    { "name": "Crossbow bolts (10)", "type": "ammunition", "rarity": "common" },
+    { "name": "Potion of healing", "type": "consumable", "rarity": "uncommon" },
+    { "name": "Lockpicks", "type": "equipment", "rarity": "common" },
+    { "name": "Map fragment", "type": "quest", "rarity": "uncommon" }
+  ],
+  "beast": [
+    { "name": "Wolf pelt", "type": "material", "rarity": "common" },
+    { "name": "Claws", "type": "material", "rarity": "common" },
+    { "name": "Fangs", "type": "material", "rarity": "common" },
+    { "name": "Beast meat (2d4 rations)", "type": "consumable", "rarity": "common" }
+  ],
+  "undead": [
+    { "name": "Tattered robes", "type": "material", "rarity": "common" },
+    { "name": "Ancient coin", "type": "currency", "rarity": "uncommon" },
+    { "name": "Bone dust", "type": "material", "rarity": "common" },
+    { "name": "Cursed amulet", "type": "quest", "rarity": "rare" },
+    { "name": "Nothing but dust", "type": "none", "rarity": "common" }
+  ],
+  "rare": [
+    { "name": "Gold coins (2d10)", "type": "currency", "rarity": "uncommon" },
+    { "name": "+1 Weapon", "type": "weapon", "rarity": "rare" },
+    { "name": "Potion of greater healing", "type": "consumable", "rarity": "rare" },
+    { "name": "Gemstone (50gp)", "type": "treasure", "rarity": "uncommon" },
+    { "name": "Magic scroll", "type": "consumable", "rarity": "rare" },
+    { "name": "Ring of protection", "type": "accessory", "rarity": "rare" }
+  ],
+  "treasure": [
+    { "name": "Gold coins (5d10)", "type": "currency", "rarity": "uncommon" },
+    { "name": "Platinum coins (1d6)", "type": "currency", "rarity": "rare" },
+    { "name": "Gemstones (3d6 × 10gp)", "type": "treasure", "rarity": "rare" },
+    { "name": "+1 Magic armor", "type": "armor", "rarity": "rare" },
+    { "name": "+1 Magic weapon", "type": "weapon", "rarity": "rare" },
+    { "name": "Wand of magic missiles", "type": "magic item", "rarity": "very rare" },
+    { "name": "Dragon scale", "type": "material", "rarity": "very rare" },
+    { "name": "Ancient artifact", "type": "quest", "rarity": "legendary" }
+  ]
+}

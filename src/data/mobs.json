@@ -1,0 +1,120 @@
+[
+  {
+    "id": "goblin",
+    "name": "Goblin",
+    "baseHP": 7,
+    "ac": 15,
+    "challenge": 0.25,
+    "moveset": [
+      { "name": "Scimitar", "damage": "1d6+2", "type": "melee" },
+      { "name": "Shortbow", "damage": "1d6+2", "type": "ranged" }
+    ],
+    "lootTable": "common"
+  },
+  {
+    "id": "orc",
+    "name": "Orc",
+    "baseHP": 15,
+    "ac": 13,
+    "challenge": 0.5,
+    "moveset": [
+      { "name": "Greataxe", "damage": "1d12+3", "type": "melee" },
+      { "name": "Javelin", "damage": "1d6+3", "type": "ranged" }
+    ],
+    "lootTable": "common"
+  },
+  {
+    "id": "skeleton",
+    "name": "Skeleton",
+    "baseHP": 13,
+    "ac": 13,
+    "challenge": 0.25,
+    "moveset": [
+      { "name": "Shortsword", "damage": "1d6+2", "type": "melee" },
+      { "name": "Shortbow", "damage": "1d6+2", "type": "ranged" }
+    ],
+    "lootTable": "undead"
+  },
+  {
+    "id": "wolf",
+    "name": "Wolf",
+    "baseHP": 11,
+    "ac": 13,
+    "challenge": 0.25,
+    "moveset": [
+      { "name": "Bite", "damage": "2d4+2", "type": "melee" }
+    ],
+    "lootTable": "beast"
+  },
+  {
+    "id": "bandit",
+    "name": "Bandit",
+    "baseHP": 11,
+    "ac": 12,
+    "challenge": 0.125,
+    "moveset": [
+      { "name": "Scimitar", "damage": "1d6+1", "type": "melee" },
+      { "name": "Light Crossbow", "damage": "1d8+1", "type": "ranged" }
+    ],
+    "lootTable": "humanoid"
+  },
+  {
+    "id": "zombie",
+    "name": "Zombie",
+    "baseHP": 22,
+    "ac": 8,
+    "challenge": 0.25,
+    "moveset": [
+      { "name": "Slam", "damage": "1d6+1", "type": "melee" }
+    ],
+    "lootTable": "undead"
+  },
+  {
+    "id": "ogre",
+    "name": "Ogre",
+    "baseHP": 59,
+    "ac": 11,
+    "challenge": 2,
+    "moveset": [
+      { "name": "Greatclub", "damage": "2d8+4", "type": "melee" },
+      { "name": "Javelin", "damage": "2d6+4", "type": "ranged" }
+    ],
+    "lootTable": "common"
+  },
+  {
+    "id": "owlbear",
+    "name": "Owlbear",
+    "baseHP": 59,
+    "ac": 13,
+    "challenge": 3,
+    "moveset": [
+      { "name": "Claw", "damage": "1d8+5", "type": "melee" },
+      { "name": "Beak", "damage": "1d10+5", "type": "melee" }
+    ],
+    "lootTable": "beast"
+  },
+  {
+    "id": "troll",
+    "name": "Troll",
+    "baseHP": 84,
+    "ac": 15,
+    "challenge": 5,
+    "moveset": [
+      { "name": "Claw", "damage": "2d6+4", "type": "melee" },
+      { "name": "Bite", "damage": "2d6+4", "type": "melee" }
+    ],
+    "lootTable": "rare"
+  },
+  {
+    "id": "dragon-wyrmling",
+    "name": "Red Dragon Wyrmling",
+    "baseHP": 75,
+    "ac": 17,
+    "challenge": 4,
+    "moveset": [
+      { "name": "Bite", "damage": "1d10+4", "type": "melee" },
+      { "name": "Fire Breath", "damage": "7d6", "type": "special" }
+    ],
+    "lootTable": "treasure"
+  }
+]

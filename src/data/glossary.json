@@ -1,0 +1,66 @@
+{
+  "HP": {
+    "term": "HP (Hit Points)",
+    "definition": "A measure of how much damage a character or creature can take before falling unconscious or dying. When HP reaches 0, the entity is defeated."
+  },
+  "AC": {
+    "term": "AC (Armor Class)",
+    "definition": "A number representing how difficult it is to hit a creature with an attack. Higher AC means better defense. Attacks must meet or exceed AC to hit."
+  },
+  "Challenge": {
+    "term": "Challenge Rating (CR)",
+    "definition": "A measure of how difficult a monster is to defeat. Higher CR indicates a tougher enemy. CR 0.25 is very weak, while CR 5+ is a serious threat."
+  },
+  "Roll": {
+    "term": "Dice Roll",
+    "definition": "Random number generation using dice notation (e.g., 1d20 means roll one 20-sided die). Used to determine outcomes of actions, attacks, and checks."
+  },
+  "Modifier": {
+    "term": "Modifier",
+    "definition": "A number added to or subtracted from a dice roll. Represents bonuses from abilities, equipment, or circumstances. Can be positive or negative."
+  },
+  "HitDie": {
+    "term": "Hit Die",
+    "definition": "The die used to determine how much HP a character gains per level. Different classes use different hit dice (d6, d8, d10, or d12)."
+  },
+  "Initiative": {
+    "term": "Initiative",
+    "definition": "Determines the order in which characters and creatures take their turns in combat. Usually rolled at the start of an encounter using a d20."
+  },
+  "Level": {
+    "term": "Level",
+    "definition": "A measure of a character or creature's power and experience. Higher levels mean more HP, better abilities, and greater strength. Ranges from 1 to 20."
+  },
+  "Attack": {
+    "term": "Attack Roll",
+    "definition": "A d20 roll to determine if an attack hits its target. The result plus modifiers is compared to the target's AC. Meeting or exceeding AC means a hit."
+  },
+  "Damage": {
+    "term": "Damage",
+    "definition": "The amount of HP reduced when an attack hits. Determined by rolling damage dice (e.g., 1d8) plus any modifiers."
+  },
+  "Heal": {
+    "term": "Healing",
+    "definition": "Restoring lost Hit Points through magic, potions, or rest. Healing cannot raise HP above the maximum value."
+  },
+  "Class": {
+    "term": "Class",
+    "definition": "A character's profession or calling. Determines their abilities, hit die, armor proficiency, and role in the party (e.g., Fighter, Wizard, Rogue)."
+  },
+  "Loot": {
+    "term": "Loot",
+    "definition": "Treasure, items, and rewards found after defeating enemies or exploring. Can include weapons, armor, currency, or magical items."
+  },
+  "Rarity": {
+    "term": "Rarity",
+    "definition": "Indicates how common or valuable an item is. Ranges from Common (basic items) to Legendary (extremely rare and powerful artifacts)."
+  },
+  "Turn": {
+    "term": "Turn",
+    "definition": "A player or creature's opportunity to act during combat. On their turn, they can move, attack, cast spells, or perform other actions."
+  },
+  "Encounter": {
+    "term": "Encounter",
+    "definition": "A combat scenario where players face enemies. Typically involves initiative, turn order, and resolving attacks until one side is defeated."
+  }
+}
