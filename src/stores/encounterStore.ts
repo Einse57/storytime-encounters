@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Move } from '../types/mob';
+import type { AbilityScores } from '../types/class';
 
 export interface Entity {
   id: string;
@@ -13,6 +14,7 @@ export interface Entity {
   level?: number;
   moveset?: Move[];
   lootTable?: string;
+  abilityScores?: AbilityScores;
 }
 
 interface EncounterStore {

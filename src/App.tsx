@@ -7,6 +7,7 @@ import { PlayerCreator } from './components/PlayerCreator';
 import { SessionControls } from './components/SessionControls';
 import { StorySeedGenerator } from './components/StorySeedGenerator';
 import { useSessionPersistence } from './hooks/useSessionPersistence';
+import { useEncounterStore } from './stores/encounterStore';
 
 function App() {
   // Initialize session persistence
@@ -14,6 +15,9 @@ function App() {
   
   // Track whether a session is active (advanced features visible)
   const [isSessionActive, setIsSessionActive] = useState(false);
+  
+  // Get entities from encounter store
+  const { entities } = useEncounterStore();
   
   const handleStartSession = () => {
     setIsSessionActive(true);
@@ -43,7 +47,7 @@ function App() {
         
         {/* Dice Roller - Always visible */}
         <div className="mb-6">
-          <DiceRoller />
+          <DiceRoller isSessionActive={isSessionActive} entities={entities} />
         </div>
         
         {/* Session Controls - Always visible */}

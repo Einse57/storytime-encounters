@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classesData from '../data/classes.json';
 import { useEncounterStore } from '../stores/encounterStore';
-import type { Class } from '../types/class';
+import type { Class, AbilityScores } from '../types/class';
 import { Tooltip } from './Tooltip';
 
 const classes = classesData as Class[];
+
+const calculateModifier = (score: number): number => {
+  return Math.floor((score - 10) / 2);
+};
 
 export const PlayerCreator: React.FC = () => {
   const [playerName, setPlayerName] = useState('');
   const [selectedClassId, setSelectedClassId] = useState('');
   const [level, setLevel] = useState(1);
+  const [abilityScores, setAbilityScores] = useState<AbilityScores>({
+    str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10
+  });
   const { addEntity } = useEncounterStore();
+
+  // Update ability scores when class changes
+  useEffect(() => {
+    const selectedClass = classes.find((c) => c.id === selectedClassId);
+    if (selectedClass) {
+      setAbilityScores(selectedClass.defaultAbilities);
+    }
+  }, [selectedClassId]);
 
   const calculateHP = (hitDie: number, level: number): number => {
     // First level gets max HP, subsequent levels get average
@@ -36,6 +51,7 @@ export const PlayerCreator: React.FC = () => {
       ac,
       level,
       moveset: selectedClass.moveset,
+      abilityScores,
     });
 
     // Reset form
@@ -94,6 +110,42 @@ export const PlayerCreator: React.FC = () => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
+
+        {/* Ability Scores */}
+        {selectedClassId && (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Ability Scores</h3>
+            <div className="grid grid-cols-3 gap-3">
+              {(['str', 'dex', 'con', 'int', 'wis', 'cha'] as const).map((ability) => {
+                const score = abilityScores[ability];
+                const modifier = calculateModifier(score);
+                return (
+                  <div key={ability}>
+                    <label className="block text-xs font-medium text-gray-600 mb-1 uppercase">
+                      {ability}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min="1"
+                        max="20"
+                        value={score}
+                        onChange={(e) => setAbilityScores({
+                          ...abilityScores,
+                          [ability]: Math.max(1, Math.min(20, Number(e.target.value)))
+                        })}
+                        className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:ring-2 focus:ring-blue-500"
+                      />
+                      <span className="text-sm font-semibold text-gray-600">
+                        ({modifier >= 0 ? '+' : ''}{modifier})
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {selectedClass && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

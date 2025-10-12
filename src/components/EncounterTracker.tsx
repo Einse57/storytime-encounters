@@ -10,6 +10,10 @@ const lootTable = lootTableData as Record<string, Array<{
   rarity: string;
 }>>;
 
+const calculateModifier = (score: number): number => {
+  return Math.floor((score - 10) / 2);
+};
+
 export const EncounterTracker: React.FC = () => {
   const { entities, removeEntity, damageEntity, healEntity, clearEncounter } = useEncounterStore();
   const { addLoot } = useLootStore();
@@ -150,6 +154,21 @@ export const EncounterTracker: React.FC = () => {
                       {entity.type === 'mob' ? '👹 Monster' : '⚔️ Player'} • <Tooltip term="AC">AC</Tooltip>: {entity.ac}
                       {entity.level && ` • `}<Tooltip term="Level">Level</Tooltip>{entity.level && `: ${entity.level}`}
                     </p>
+                    {/* Display Ability Modifiers for Players */}
+                    {entity.type === 'player' && entity.abilityScores && (
+                      <div className="mt-1 text-xs text-gray-600 font-mono">
+                        {(['str', 'dex', 'con', 'int', 'wis', 'cha'] as const).map((ability, idx) => {
+                          const score = entity.abilityScores![ability];
+                          const modifier = calculateModifier(score);
+                          return (
+                            <span key={ability} className="mr-2">
+                              {idx > 0 && '• '}
+                              <span className="uppercase font-semibold">{ability}</span> {modifier >= 0 ? '+' : ''}{modifier}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={() => removeEntity(entity.id)}

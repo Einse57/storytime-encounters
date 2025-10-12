@@ -1,5 +1,14 @@
 import type { Move } from './mob';
 
+export interface AbilityScores {
+  str: number;
+  dex: number;
+  con: number;
+  int: number;
+  wis: number;
+  cha: number;
+}
+
 export interface Class {
   id: string;
   name: string;
@@ -9,4 +18,5 @@ export interface Class {
   primaryStat: string;
   armorType: string;
   moveset: Move[];
+  defaultAbilities: AbilityScores;
 }
