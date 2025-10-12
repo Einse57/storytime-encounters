@@ -6,7 +6,12 @@
     "baseAC": 16,
     "description": "A master of martial combat, skilled with a variety of weapons and armor",
     "primaryStat": "Strength",
-    "armorType": "Heavy"
+    "armorType": "Heavy",
+    "moveset": [
+      { "name": "Longsword", "damage": "1d8+3", "type": "melee" },
+      { "name": "Shield Bash", "damage": "1d4+3", "type": "melee" },
+      { "name": "Javelin", "damage": "1d6+3", "type": "ranged" }
+    ]
   },
   {
     "id": "wizard",
@@ -15,7 +20,12 @@
     "baseAC": 12,
     "description": "A scholarly magic-user capable of manipulating reality through arcane spells",
     "primaryStat": "Intelligence",
-    "armorType": "None"
+    "armorType": "None",
+    "moveset": [
+      { "name": "Fire Bolt", "damage": "1d10", "type": "ranged" },
+      { "name": "Magic Missile", "damage": "3d4+3", "type": "special" },
+      { "name": "Quarterstaff", "damage": "1d6", "type": "melee" }
+    ]
   },
   {
     "id": "rogue",
@@ -24,7 +34,12 @@
     "baseAC": 14,
     "description": "A scoundrel who uses stealth and trickery to overcome obstacles and enemies",
     "primaryStat": "Dexterity",
-    "armorType": "Light"
+    "armorType": "Light",
+    "moveset": [
+      { "name": "Sneak Attack", "damage": "1d6+3+1d6", "type": "melee" },
+      { "name": "Shortbow", "damage": "1d6+3", "type": "ranged" },
+      { "name": "Dagger", "damage": "1d4+3", "type": "melee" }
+    ]
   },
   {
     "id": "cleric",
@@ -33,7 +48,12 @@
     "baseAC": 16,
     "description": "A priestly champion who wields divine magic in service of a higher power",
     "primaryStat": "Wisdom",
-    "armorType": "Medium"
+    "armorType": "Medium",
+    "moveset": [
+      { "name": "Mace", "damage": "1d6+2", "type": "melee" },
+      { "name": "Sacred Flame", "damage": "1d8", "type": "special" },
+      { "name": "Cure Wounds", "damage": "1d8+3", "type": "special" }
+    ]
   },
   {
     "id": "ranger",
@@ -42,7 +62,12 @@
     "baseAC": 14,
     "description": "A warrior who uses martial prowess and nature magic to combat threats",
     "primaryStat": "Dexterity",
-    "armorType": "Medium"
+    "armorType": "Medium",
+    "moveset": [
+      { "name": "Longbow", "damage": "1d8+3", "type": "ranged" },
+      { "name": "Shortsword", "damage": "1d6+3", "type": "melee" },
+      { "name": "Hunter's Mark", "damage": "1d6+3+1d6", "type": "special" }
+    ]
   },
   {
     "id": "paladin",
@@ -51,7 +76,12 @@
     "baseAC": 18,
     "description": "A holy warrior bound to a sacred oath, combining martial might and divine magic",
     "primaryStat": "Strength",
-    "armorType": "Heavy"
+    "armorType": "Heavy",
+    "moveset": [
+      { "name": "Longsword", "damage": "1d8+3", "type": "melee" },
+      { "name": "Divine Smite", "damage": "1d8+3+2d8", "type": "melee" },
+      { "name": "Javelin", "damage": "1d6+3", "type": "ranged" }
+    ]
   },
   {
     "id": "barbarian",
@@ -60,7 +90,12 @@
     "baseAC": 14,
     "description": "A fierce warrior who can enter a battle rage for devastating power",
     "primaryStat": "Strength",
-    "armorType": "Medium"
+    "armorType": "Medium",
+    "moveset": [
+      { "name": "Greataxe", "damage": "1d12+3", "type": "melee" },
+      { "name": "Rage Attack", "damage": "1d12+5", "type": "melee" },
+      { "name": "Handaxe", "damage": "1d6+3", "type": "ranged" }
+    ]
   },
   {
     "id": "bard",
@@ -69,7 +104,12 @@
     "baseAC": 13,
     "description": "An inspiring magician whose power echoes the music of creation",
     "primaryStat": "Charisma",
-    "armorType": "Light"
+    "armorType": "Light",
+    "moveset": [
+      { "name": "Rapier", "damage": "1d8+2", "type": "melee" },
+      { "name": "Vicious Mockery", "damage": "1d4", "type": "special" },
+      { "name": "Healing Word", "damage": "1d4+3", "type": "special" }
+    ]
   },
   {
     "id": "druid",
@@ -78,7 +118,12 @@
     "baseAC": 13,
     "description": "A priest of nature, wielding the powers of the wild and adopting animal forms",
     "primaryStat": "Wisdom",
-    "armorType": "Medium"
+    "armorType": "Medium",
+    "moveset": [
+      { "name": "Shillelagh", "damage": "1d8+3", "type": "melee" },
+      { "name": "Produce Flame", "damage": "1d8", "type": "ranged" },
+      { "name": "Wild Shape", "damage": "1d6+3", "type": "special" }
+    ]
   },
   {
     "id": "monk",
@@ -87,7 +132,12 @@
     "baseAC": 15,
     "description": "A master of martial arts, harnessing the power of ki to perform superhuman feats",
     "primaryStat": "Dexterity",
-    "armorType": "None"
+    "armorType": "None",
+    "moveset": [
+      { "name": "Unarmed Strike", "damage": "1d4+3", "type": "melee" },
+      { "name": "Flurry of Blows", "damage": "2d4+6", "type": "melee" },
+      { "name": "Dart", "damage": "1d4+3", "type": "ranged" }
+    ]
   },
   {
     "id": "sorcerer",
@@ -96,7 +146,12 @@
     "baseAC": 12,
     "description": "A spellcaster who draws on inherent magic from a gift or bloodline",
     "primaryStat": "Charisma",
-    "armorType": "None"
+    "armorType": "None",
+    "moveset": [
+      { "name": "Fire Bolt", "damage": "1d10", "type": "ranged" },
+      { "name": "Burning Hands", "damage": "3d6", "type": "special" },
+      { "name": "Dagger", "damage": "1d4+1", "type": "melee" }
+    ]
   },
   {
     "id": "warlock",
@@ -105,6 +160,11 @@
     "baseAC": 13,
     "description": "A wielder of magic derived from a bargain with an otherworldly entity",
     "primaryStat": "Charisma",
-    "armorType": "Light"
+    "armorType": "Light",
+    "moveset": [
+      { "name": "Eldritch Blast", "damage": "1d10", "type": "ranged" },
+      { "name": "Hex", "damage": "1d10+1d6", "type": "special" },
+      { "name": "Dagger", "damage": "1d4+2", "type": "melee" }
+    ]
   }
 ]

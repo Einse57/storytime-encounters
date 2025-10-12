@@ -35,6 +35,7 @@ export const PlayerCreator: React.FC = () => {
       maxHP: hp,
       ac,
       level,
+      moveset: selectedClass.moveset,
     });
 
     // Reset form

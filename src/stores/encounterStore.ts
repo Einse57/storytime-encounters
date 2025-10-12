@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { Move } from '../types/mob';
 
 export interface Entity {
   id: string;
@@ -10,6 +11,8 @@ export interface Entity {
   initiative?: number;
   mobId?: string;
   level?: number;
+  moveset?: Move[];
+  lootTable?: string;
 }
 
 interface EncounterStore {

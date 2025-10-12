@@ -1,11 +1,37 @@
 import React, { useState } from 'react';
 import { useEncounterStore, type Entity } from '../stores/encounterStore';
+import { useLootStore } from '../stores/lootStore';
+import lootTableData from '../data/lootTable.json';
 import { Tooltip } from './Tooltip';
 
+const lootTable = lootTableData as Record<string, Array<{
+  name: string;
+  type: string;
+  rarity: string;
+}>>;
+
 export const EncounterTracker: React.FC = () => {
-  const { entities, currentTurn, removeEntity, damageEntity, healEntity, nextTurn, clearEncounter } = useEncounterStore();
+  const { entities, removeEntity, damageEntity, healEntity, clearEncounter } = useEncounterStore();
+  const { addLoot } = useLootStore();
   const [selectedEntity, setSelectedEntity] = useState<string>('');
   const [damageAmount, setDamageAmount] = useState<number>(0);
+
+  const generateLoot = (entity: Entity) => {
+    if (!entity.lootTable || entity.type !== 'mob') return;
+    
+    const table = lootTable[entity.lootTable] || lootTable.common;
+    const randomItem = table[Math.floor(Math.random() * table.length)];
+    
+    addLoot({
+      id: `${Date.now()}-${Math.random()}`,
+      timestamp: Date.now(),
+      mobName: entity.name,
+      mobLevel: entity.level || 1,
+      itemName: randomItem.name,
+      itemType: randomItem.type,
+      rarity: randomItem.rarity,
+    });
+  };
 
   const handleDamage = () => {
     if (selectedEntity && damageAmount > 0) {
@@ -35,22 +61,13 @@ export const EncounterTracker: React.FC = () => {
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-serif font-bold text-gray-800">Encounter Tracker</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={nextTurn}
-            disabled={entities.length === 0}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200"
-          >
-            Next Turn
-          </button>
-          <button
-            onClick={clearEncounter}
-            disabled={entities.length === 0}
-            className="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200"
-          >
-            Clear All
-          </button>
-        </div>
+        <button
+          onClick={clearEncounter}
+          disabled={entities.length === 0}
+          className="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200"
+        >
+          Clear All
+        </button>
       </div>
 
       {/* HP Modification Controls */}
@@ -104,20 +121,15 @@ export const EncounterTracker: React.FC = () => {
             No entities in encounter. Add mobs from the Mob Library.
           </p>
         ) : (
-          entities.map((entity, index) => {
+          entities.map((entity) => {
             const hpPercentage = getHPPercentage(entity);
-            const isCurrentTurn = index === currentTurn;
             const isDead = entity.currentHP === 0;
 
             return (
               <div
                 key={entity.id}
                 className={`border rounded-lg p-4 transition-all duration-200 ${
-                  isCurrentTurn
-                    ? entity.type === 'player'
-                      ? 'border-purple-500 bg-purple-50 shadow-lg'
-                      : 'border-blue-500 bg-blue-50 shadow-lg'
-                    : isDead
+                  isDead
                     ? 'border-gray-300 bg-gray-100 opacity-60'
                     : entity.type === 'player'
                     ? 'border-purple-200 bg-purple-50'
@@ -128,13 +140,6 @@ export const EncounterTracker: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">
                       {entity.name}
-                      {isCurrentTurn && (
-                        <span className={`ml-2 text-sm text-white px-2 py-1 rounded ${
-                          entity.type === 'player' ? 'bg-purple-600' : 'bg-blue-600'
-                        }`}>
-                          Current Turn
-                        </span>
-                      )}
                       {isDead && (
                         <span className="ml-2 text-sm bg-red-600 text-white px-2 py-1 rounded">
                           Defeated
@@ -169,6 +174,41 @@ export const EncounterTracker: React.FC = () => {
                     />
                   </div>
                 </div>
+
+                {/* Moveset */}
+                {entity.moveset && entity.moveset.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <h4 className="text-xs font-semibold text-gray-600 mb-2">Moveset:</h4>
+                    <div className="space-y-1">
+                      {entity.moveset.map((move, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between text-xs bg-gray-50 rounded px-2 py-1"
+                        >
+                          <span className="font-medium text-gray-700">
+                            {move.type === 'melee' && '⚔️ '}
+                            {move.type === 'ranged' && '🏹 '}
+                            {move.type === 'special' && '✨ '}
+                            {move.name}
+                          </span>
+                          <span className="font-mono text-gray-600">{move.damage}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Generate Loot Button - Only for defeated mobs */}
+                {isDead && entity.type === 'mob' && entity.lootTable && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <button
+                      onClick={() => generateLoot(entity)}
+                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold py-2 px-3 rounded-md transition-colors duration-200 shadow-sm"
+                    >
+                      💰 Generate Loot
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })

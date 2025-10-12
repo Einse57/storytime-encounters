@@ -1,3 +1,5 @@
+import type { Move } from './mob';
+
 export interface Class {
   id: string;
   name: string;
@@ -6,4 +8,5 @@ export interface Class {
   description: string;
   primaryStat: string;
   armorType: string;
+  moveset: Move[];
 }

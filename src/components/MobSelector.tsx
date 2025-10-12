@@ -1,41 +1,18 @@
 import React, { useState } from 'react';
 import mobsData from '../data/mobs.json';
-import lootTableData from '../data/lootTable.json';
 import { useEncounterStore } from '../stores/encounterStore';
-import { useLootStore } from '../stores/lootStore';
 import type { Mob } from '../types/mob';
 import { Tooltip } from './Tooltip';
 
 const mobs = mobsData as Mob[];
-const lootTable = lootTableData as Record<string, Array<{
-  name: string;
-  type: string;
-  rarity: string;
-}>>;
 
 export const MobSelector: React.FC = () => {
   const [selectedMobId, setSelectedMobId] = useState<string>('');
   const [level, setLevel] = useState(1);
   const { addEntity } = useEncounterStore();
-  const { addLoot } = useLootStore();
 
   const calculateScaledHP = (baseHP: number, level: number): number => {
     return Math.floor(baseHP * (1 + 0.2 * (level - 1)));
-  };
-
-  const generateLoot = (mob: Mob, level: number) => {
-    const table = lootTable[mob.lootTable] || lootTable.common;
-    const randomItem = table[Math.floor(Math.random() * table.length)];
-    
-    addLoot({
-      id: `${Date.now()}-${Math.random()}`,
-      timestamp: Date.now(),
-      mobName: mob.name,
-      mobLevel: level,
-      itemName: randomItem.name,
-      itemType: randomItem.type,
-      rarity: randomItem.rarity,
-    });
   };
 
   const addMobToEncounter = () => {
@@ -55,6 +32,8 @@ export const MobSelector: React.FC = () => {
       ac: mob.ac,
       mobId: mob.id,
       level,
+      moveset: mob.moveset,
+      lootTable: mob.lootTable,
     });
   };
 
@@ -102,7 +81,6 @@ export const MobSelector: React.FC = () => {
           <MobPreview 
             mob={mobs.find((m) => m.id === selectedMobId)!} 
             level={level}
-            onGenerateLoot={generateLoot}
           />
         )}
         
@@ -121,10 +99,9 @@ export const MobSelector: React.FC = () => {
 interface MobPreviewProps {
   mob: Mob;
   level: number;
-  onGenerateLoot: (mob: Mob, level: number) => void;
 }
 
-const MobPreview: React.FC<MobPreviewProps> = ({ mob, level, onGenerateLoot }) => {
+const MobPreview: React.FC<MobPreviewProps> = ({ mob, level }) => {
   const scaledHP = Math.floor(mob.baseHP * (1 + 0.2 * (level - 1)));
 
   return (
@@ -156,13 +133,6 @@ const MobPreview: React.FC<MobPreviewProps> = ({ mob, level, onGenerateLoot }) =
           ))}
         </ul>
       </div>
-      
-      <button
-        onClick={() => onGenerateLoot(mob, level)}
-        className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold py-2 px-3 rounded-md transition-colors duration-200"
-      >
-        Generate Loot
-      </button>
     </div>
   );
 };
