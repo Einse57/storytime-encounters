@@ -181,8 +181,8 @@ Edit `src/data/lootTable.json` - add items to appropriate category.
 
 ## 👥 Target Audience
 
-1. **Primary:** DMs running one-shots or improvisational sessions
-2. **Secondary:** New players learning D&D basics
+1. **Primary:** Busy parents who wish they could be DMs running one-shots or improvisational sessions
+2. **Secondary:** New players testing out D&D basics
 
 ---
 
@@ -193,8 +193,6 @@ MIT License - Built as a portfolio project demonstrating product design and full
 ---
 
 ## 🙏 Acknowledgments
-
-Built with ❤️ for storytellers and adventurers.
 
 **Tech:** React, TypeScript, Tailwind CSS, Zustand, Vite  
 **Inspiration:** D&D 5e, improvisational storytelling, accessibility-first design
