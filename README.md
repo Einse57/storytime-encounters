@@ -1,12 +1,12 @@
 # ⚔️ Storytime Encounters
 
-> Your Ad Hoc D&D Companion
+> Your D&D Inspired Storytime Companion
 
 A lightweight, browser-based D&D-inspired session aid that supports spontaneous storytelling and guided gameplay. It provides core mechanics—dice, mobs, HP, and loot—while introducing D&D concepts in-context.
 
 ![Tech Stack](https://img.shields.io/badge/Tech-React%20%7C%20TypeScript%20%7C%20Tailwind-blue)
 
-## 🎯 Product Goals
+## 🎯 Goals
 
 - **Instant Session Readiness** - Play starts in under 60 seconds
 - **Story-Focused** - Keep players focused on story, not systems
