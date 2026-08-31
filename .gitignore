@@ -9,12 +9,27 @@ dist-ssr/
 build/
 *.tsbuildinfo
 
-# Environment variables
+# Environment variables & API keys
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+*.env
+
+# Media & Recording Artifacts
+*.mp4
+*.webm
+*.mov
+*.avi
+*.m4a
+record_*.cjs
+frames*/
+scratch/
+
+# Planning & Walkthrough Docs (if saved locally)
+implementation_plan.md
+walkthrough.md
 
 # Logs
 logs/

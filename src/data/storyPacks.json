@@ -1,0 +1,259 @@
+[
+  {
+    "id": "high-fantasy",
+    "title": "High Fantasy & Legends",
+    "icon": "⚔️",
+    "genre": "fantasy",
+    "description": "Epic castles, enchanted woods, forgotten dungeons, and ancient magic.",
+    "seeds": {
+      "settings": [
+        "a forgotten temple deep in the emerald jungle",
+        "a bustling bazaar in a sun-baked desert city",
+        "an abandoned dwarven mine glowing with blue crystal veins",
+        "a mysterious tower floating silently above the storm clouds",
+        "a haunted forest shrouded in eternal twilight and whisper-winds",
+        "a coastal smuggler's cove plagued by magical phantom storms",
+        "an ancient library hidden in labyrinthine underground catacombs",
+        "a frozen glacial fortress guarded by slumbering ice giants",
+        "a crumbling castle perched on the precipice of a bottomless ravine",
+        "a hidden oasis where the water mirrors the stars even at noon",
+        "a series of subterranean caverns illuminated by singing mushrooms",
+        "a sun-drenched valley where mythical beasts roam freely",
+        "a floating river market built upon interconnected barges",
+        "a carnival of illusions that appears only under the full moon",
+        "an enchanted botanical garden where time flows backwards",
+        "a volcanic caldera guarding the entrance to a forgotten forge",
+        "a colossal elder tree housing an entire elven village within its boughs",
+        "a mist-draped battlefield where ghostly armor still patrols",
+        "a labyrinth of ancient aqueducts beneath a sprawling royal capital",
+        "a secluded mountaintop monastery reachable only by griffon"
+      ],
+      "conflicts": [
+        "A legendary sun-crystal has been stolen from the sanctuary",
+        "Villagers are falling into an unbroken slumber filled with shared dreams",
+        "An ancient guardian spirit is awakening, confused and furious",
+        "Two rival merchant guilds are on the brink of an all-out street war",
+        "A creeping shadow blight is turning the river waters to liquid obsidian",
+        "A dimensional rift has torn open in the town square",
+        "The beloved village elder has been replaced by a shape-shifting trickster",
+        "Every clock and sundial in the realm has stopped simultaneously",
+        "A young red dragon has made its nest in the village windmill",
+        "Stone statues across the region have started weeping glowing tears",
+        "A mysterious bard's melody is compelling forest beasts to march on the town",
+        "The ancient protective runes carved into the city walls are fading",
+        "A bandit lord has captured the only bridge across the roaring canyon",
+        "Strange bioluminescent flora is overrunning farms overnight",
+        "A long-dormant volcano is trembling with magical elemental energy",
+        "The stars are vanishing from the night sky one constellation at a time"
+      ],
+      "hooks": [
+        "and the party discovers they carry the only key to reverse it",
+        "but the town guard suspects the party is behind the disturbance",
+        "unless the ancient riddles carved into the town fountain can be solved by dawn",
+        "and a mischievous fairy offers to guide them for a price",
+        "with only a torn parchment map and a talking compass to lead the way",
+        "revealed by an urgent message delivered by a silver owl",
+        "forcing the party to form an uneasy truce with their former rival",
+        "but every step forward seems to twist the landscape into impossible shapes",
+        "and the only person with the answer is currently trapped inside a magic painting",
+        "while an approaching solar eclipse threatens to make the catastrophe permanent",
+        "and an old friend desperately waves to them from across the crowded square",
+        "with the fate of the entire valley resting on a single brave decision"
+      ]
+    },
+    "sparks": {
+      "loot": [
+        {
+          "id": "loot-1",
+          "name": "Lantern of Whispered Secrets",
+          "type": "Magic Item",
+          "rarity": "rare",
+          "description": "A brass lantern that casts pale violet light. Instead of buzzing, the flame whispers clues about hidden compartments.",
+          "storyHook": "When held up to a plain wall, it illuminates a glowing secret doorway unseen by others."
+        },
+        {
+          "id": "loot-2",
+          "name": "Potion of Feathered Agility",
+          "type": "Consumable",
+          "rarity": "uncommon",
+          "description": "A shimmering cerulean vial with a tiny feather floating inside that never touches the glass.",
+          "storyHook": "Drinking it makes the hero feel weightless, allowing them to leap 30 feet or float down safely."
+        },
+        {
+          "id": "loot-3",
+          "name": "Singing Silver Dagger",
+          "type": "Weapon",
+          "rarity": "uncommon",
+          "description": "An ornate blade forged from polished moon-silver. It hums a cheerful tune when danger is near.",
+          "storyHook": "It glows softly whenever a creature tells a lie in its presence."
+        },
+        {
+          "id": "loot-4",
+          "name": "Pouch of Infinite Salt & Pepper",
+          "type": "Trinket",
+          "rarity": "common",
+          "description": "A small velvet pouch that never empties, seasoning any bland trail ration into a gourmet feast.",
+          "storyHook": "Can be thrown into a monster's eyes in a pinch to create a flavorful diversion!"
+        },
+        {
+          "id": "loot-5",
+          "name": "Boots of the Cloudhopper",
+          "type": "Armor",
+          "rarity": "rare",
+          "description": "Soft leather boots with wings stitched into the heels. Leaves faint mist footprints that dissipate quickly.",
+          "storyHook": "Allows the wearer to take three strides directly onto thin air before falling."
+        },
+        {
+          "id": "loot-6",
+          "name": "Amulet of Beast Tongue",
+          "type": "Accessory",
+          "rarity": "uncommon",
+          "description": "A carved jade pendant in the shape of a howling wolf with amber gemstone eyes.",
+          "storyHook": "Grants the wearer the ability to converse fluently with woodland creatures for 10 minutes."
+        },
+        {
+          "id": "loot-7",
+          "name": "Sun-Forged Claymore",
+          "type": "Weapon",
+          "rarity": "very rare",
+          "description": "A radiant greatsword bathed in perpetual golden warmth. Slices through shadows and illuminates dark caves.",
+          "storyHook": "Pulled from an ancient stone altar; shadows recoil whenever it is unsheathed."
+        },
+        {
+          "id": "loot-8",
+          "name": "Clockwork Songbird",
+          "type": "Trinket",
+          "rarity": "uncommon",
+          "description": "A miniature brass mechanical robin that can record up to 30 seconds of audio and replay it anywhere.",
+          "storyHook": "Can be sent ahead to scout or lure guards with a perfect mimicry of voices."
+        },
+        {
+          "id": "loot-9",
+          "name": "Cloak of the Shadow Weaver",
+          "type": "Armor",
+          "rarity": "very rare",
+          "description": "Woven from twilight silk; the fabric seems to blend seamlessly into dim lighting and foliage.",
+          "storyHook": "Allows the wearer to melt into shadows and reappear 20 feet away."
+        },
+        {
+          "id": "loot-10",
+          "name": "Crown of the Verdant Monarch",
+          "type": "Relic",
+          "rarity": "legendary",
+          "description": "A circlet of living ironwood branches blooming with perpetual jasmine flowers.",
+          "storyHook": "Allows the wearer to command plants to entangle foes or sprout bridges over chasms."
+        }
+      ],
+      "creatures": [
+        {
+          "id": "creature-1",
+          "name": "Barnaby the Goblin Cook",
+          "category": "Humanoid / Goblin",
+          "demeanor": "mischievous",
+          "quirk": "Wears a chef hat far too big for his ears and carries a massive iron stew ladle as a weapon.",
+          "narrativePrompt": "Offers to trade secret dungeon routes in exchange for rare spices or shiny spoons."
+        },
+        {
+          "id": "creature-2",
+          "name": "Mossback, the Elder Treant",
+          "category": "Plant / Giant",
+          "demeanor": "friendly",
+          "quirk": "Speaks so slowly that moss literally grows while he finishes a sentence.",
+          "narrativePrompt": "He was mistaken for a bridge, but when the party steps onto him, his sleepy eyes open."
+        },
+        {
+          "id": "creature-3",
+          "name": "Cinder, the Baby Pyredrake",
+          "category": "Dragonkin",
+          "demeanor": "cautious",
+          "quirk": "Sneezes tiny sparks whenever startled and hoards shiny copper buttons.",
+          "narrativePrompt": "Separated from its mother, it has decided the hero's backpack is its new nest."
+        },
+        {
+          "id": "creature-4",
+          "name": "Sir Reginald, the Ghost Knight",
+          "category": "Undead / Spirit",
+          "demeanor": "mysterious",
+          "quirk": "Constantly polishes translucent spectral armor that cannot get dirty.",
+          "narrativePrompt": "Guards the ancient doorway and demands a riddle or chivalrous duel before letting anyone pass."
+        },
+        {
+          "id": "creature-5",
+          "name": "Bramblecat",
+          "category": "Beast / Magical",
+          "demeanor": "friendly",
+          "quirk": "A feline made of flowering rosebushes with thorn claws that purrs like rustling leaves.",
+          "narrativePrompt": "Guides the adventurers along hidden paths through dangerous thorn brambles."
+        },
+        {
+          "id": "creature-6",
+          "name": "Grimjaw the Ogre Collector",
+          "category": "Giant / Ogre",
+          "demeanor": "mischievous",
+          "quirk": "Believes he is an exquisite art curator; his 'art' is colourful teacups and broken shields.",
+          "narrativePrompt": "Blocks the path and demands the party donate a 'masterpiece' to his gallery."
+        },
+        {
+          "id": "creature-7",
+          "name": "Whisperwing the Sprite Herald",
+          "category": "Fey",
+          "demeanor": "mischievous",
+          "quirk": "Flies at supersonic speeds leaving trails of glitter, speaking in rhyming riddles.",
+          "narrativePrompt": "Delivers an urgent warning from the Queen of the Fey, then plays a harmless prank."
+        },
+        {
+          "id": "creature-8",
+          "name": "Rust-Biter the Burrowing Scavenger",
+          "category": "Monstrosity",
+          "demeanor": "hostile",
+          "quirk": "An armored armadillo-bug creature with an appetite specifically for metal weapons.",
+          "narrativePrompt": "Emerged from the cave wall smelling the party's metal gear with great excitement."
+        }
+      ],
+      "twists": [
+        {
+          "id": "twist-1",
+          "title": "Sudden Arcane Fog",
+          "complicationType": "environmental",
+          "description": "A thick, shimmering lavender mist rolls in, dampening sound and causing shadows to dance on their own.",
+          "quickAction": "Roll a Perception check (DC 13) to avoid getting separated!"
+        },
+        {
+          "id": "twist-2",
+          "title": "The Fake Artifact!",
+          "complicationType": "mystery",
+          "description": "Upon closer inspection, the treasure they found is made of painted chocolate—or an illusion spell!",
+          "quickAction": "Where did the real treasure go, and who left the decoy?"
+        },
+        {
+          "id": "twist-3",
+          "title": "Unexpected Reinforcements",
+          "complicationType": "surprise_visitor",
+          "description": "A runaway wagon driven by a chaotic gnome tinkerer crashes directly into the scene!",
+          "quickAction": "The crash disrupts the standoff—how does the party react to the chaos?"
+        },
+        {
+          "id": "twist-4",
+          "title": "Collapsing Floorboards",
+          "complicationType": "environmental",
+          "description": "The ground beneath their feet cracks loudly and crumbles into an underground canal.",
+          "quickAction": "Roll an Agility/Dexterity check (DC 14) to grab a ledge or dive to safety!"
+        },
+        {
+          "id": "twist-5",
+          "title": "A Wild Magic Surge",
+          "complicationType": "magical_surge",
+          "description": "A burst of rainbow sparks erupts. Everyone's voices turn into musical instruments for 5 minutes.",
+          "quickAction": "Players must communicate in song or sound effects to coordinate their next move."
+        },
+        {
+          "id": "twist-6",
+          "title": "A Secret Passage Discovered",
+          "complicationType": "mystery",
+          "description": "Leaning against the wall accidentally triggers a hidden lever, swinging open a dusty bookshelf passage.",
+          "quickAction": "Does the party investigate the drafty secret tunnel or stay on their current path?"
+        }
+      ]
+    }
+  }
+]
