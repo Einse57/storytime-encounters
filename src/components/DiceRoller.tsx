@@ -33,12 +33,6 @@ export const DiceRoller: React.FC = () => {
     addRoll(roll);
   };
 
-  const handleRollAll = () => {
-    executeRoll(1, 20, '1d20 Action');
-    executeRoll(1, 10, '1d10 Check');
-    executeRoll(1, 6, '1d6 Standard');
-  };
-
   return (
     <div className="space-y-2.5">
       {/* Section Header */}
@@ -54,8 +48,8 @@ export const DiceRoller: React.FC = () => {
         </button>
       </div>
 
-      {/* Row of 4 Chunky 3D Dice Buttons - Pure High-Contrast White Font */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-2.5">
+      {/* Row of 3 Chunky 3D Dice Buttons (D6, D10, D20) */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
         {/* D6 Red Button */}
         <button
           onClick={() => executeRoll(1, 6, '1d6 Standard')}
@@ -116,27 +110,6 @@ export const DiceRoller: React.FC = () => {
             style={{ color: '#ffffff' }}
           >
             {lastD20 !== null ? lastD20 : '—'}
-          </span>
-        </button>
-
-        {/* ROLL ALL Green Button */}
-        <button
-          onClick={handleRollAll}
-          className="dice-btn-3d dice-btn-green py-3 sm:py-3.5 px-2 flex flex-col items-center justify-center cursor-pointer select-none"
-          style={{ color: '#ffffff' }}
-          aria-label="Roll All Dice"
-        >
-          <span
-            className="font-serif font-black text-xs sm:text-sm tracking-wider uppercase drop-shadow-md leading-tight"
-            style={{ color: '#ffffff' }}
-          >
-            ROLL
-          </span>
-          <span
-            className="font-serif font-black text-sm sm:text-base mt-0.5 drop-shadow-md leading-tight"
-            style={{ color: '#ffffff' }}
-          >
-            ALL
           </span>
         </button>
       </div>
