@@ -71,7 +71,7 @@ export const useStoryStore = create<StoryStore>((set, get) => ({
   setCurrentPack: (packId: string) => {
     const pack = storyPacks.find((p) => p.id === packId);
     if (!pack) return;
-    set({ currentPackId: packId });
+    set({ currentPackId: packId, activeLoot: null, activeCreature: null, activeTwist: null });
     get().randomizeSeed();
   },
 

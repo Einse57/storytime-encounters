@@ -10,32 +10,51 @@ function App() {
   // Silent session persistence (auto-saves to localStorage in the background)
   useSessionPersistence();
   
-  const { getCurrentPack } = useStoryStore();
-  const pack = getCurrentPack();
+  const { currentPackId, setCurrentPack } = useStoryStore();
+  const isScifi = currentPackId === 'scifi-frontier';
 
   return (
-    <div className="min-h-screen bg-[#f5eedc] text-[#2c1810] pb-16 font-sans">
+    <div className={`min-h-screen ${isScifi ? 'bg-[#0f172a] text-slate-100' : 'bg-[#f5eedc] text-[#2c1810]'} pb-16 font-sans transition-colors duration-300`}>
       {/* Clean Top Header */}
       <header className="pt-3 pb-1.5 px-4 max-w-lg mx-auto">
-        <div className="flex justify-between items-center">
-          <div className="flex-1 text-center pr-2">
-            <h1 className="text-lg sm:text-xl font-serif font-black tracking-wider text-[#451a03] uppercase drop-shadow-2xs">
+        <div className="flex justify-between items-center gap-2">
+          <div className="flex-1 text-left">
+            <h1 className={`text-base sm:text-lg font-serif font-black tracking-wider uppercase drop-shadow-2xs ${isScifi ? 'text-amber-400' : 'text-[#451a03]'}`}>
               Storytime Encounters
             </h1>
           </div>
 
-          {/* Theme Pill */}
-          <div className="flex-shrink-0 flex items-center bg-[#fcf7ec] border border-[#d9c49e] rounded-lg px-2 py-0.5 shadow-2xs">
-            <span className="text-[10px] font-serif font-bold text-amber-950 uppercase tracking-wider leading-tight">
-              {pack.title.split('&')[0].trim()}
-            </span>
+          {/* 1-Click Theme Switcher (Direct Toggle: Fantasy vs Sci-Fi) */}
+          <div className={`flex-shrink-0 flex items-center p-0.5 rounded-lg border shadow-2xs ${isScifi ? 'bg-[#1e293b] border-slate-700' : 'bg-[#eae0cc] border-[#d9c49e]'}`}>
+            <button
+              onClick={() => setCurrentPack('high-fantasy')}
+              className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-serif font-black uppercase tracking-wider transition-all cursor-pointer ${
+                !isScifi
+                  ? 'bg-[#451a03] text-amber-100 shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Switch to High Fantasy theme"
+            >
+              Fantasy
+            </button>
+            <button
+              onClick={() => setCurrentPack('scifi-frontier')}
+              className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-serif font-black uppercase tracking-wider transition-all cursor-pointer ${
+                isScifi
+                  ? 'bg-[#0284c7] text-white shadow-xs'
+                  : 'text-amber-950/70 hover:text-amber-950'
+              }`}
+              title="Switch to Sci-Fi Frontier theme"
+            >
+              Sci-Fi
+            </button>
           </div>
         </div>
       </header>
 
       {/* Main Storytelling Cockpit */}
       <main className="max-w-lg mx-auto px-3 space-y-3 pt-0.5">
-        {/* 1. Story Seed Generator */}
+        {/* 1. Story Seed Generator (Setting, Conflict, Hook) */}
         <section aria-label="Story Seed">
           <StorySeedGenerator />
         </section>
@@ -62,7 +81,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-6 text-center text-amber-900/60 text-[11px] font-serif px-4">
+      <footer className={`mt-6 text-center text-[11px] font-serif px-4 ${isScifi ? 'text-slate-500' : 'text-amber-900/60'}`}>
         <p>Built for storytellers, adventurers, and young imaginations</p>
       </footer>
     </div>
