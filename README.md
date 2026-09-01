@@ -45,7 +45,3 @@ npm run build
 - **Styling:** Tailwind CSS
 - **State Management:** Zustand
 - **AI Integrations:** Google Gemini API (speech transcription & scene illustrations)
-
-## License
-
-MIT License.
