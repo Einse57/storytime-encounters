@@ -37,6 +37,9 @@ interface StoryStore {
 
   // Seed actions
   randomizeSeed: () => void;
+  rollSetting: () => void;
+  rollConflict: () => void;
+  rollHook: () => void;
   toggleLock: (key: 'setting' | 'conflict' | 'hook') => void;
   setSeed: (setting: string, conflict: string, hook: string) => void;
 
@@ -79,29 +82,50 @@ export const useStoryStore = create<StoryStore>((set, get) => ({
 
   randomizeSeed: () => {
     const pack = get().getCurrentPack();
-    const { seed } = get();
     const { settings, conflicts, hooks } = pack.seeds;
 
-    const randomSetting = seed.isSettingLocked
-      ? seed.setting
-      : settings[Math.floor(Math.random() * settings.length)];
+    const randomSetting = settings[Math.floor(Math.random() * settings.length)];
+    const randomConflict = conflicts[Math.floor(Math.random() * conflicts.length)];
+    const randomHook = hooks[Math.floor(Math.random() * hooks.length)];
 
-    const randomConflict = seed.isConflictLocked
-      ? seed.conflict
-      : conflicts[Math.floor(Math.random() * conflicts.length)];
-
-    const randomHook = seed.isHookLocked
-      ? seed.hook
-      : hooks[Math.floor(Math.random() * hooks.length)];
-
-    set({
+    set((state) => ({
       seed: {
-        ...seed,
+        ...state.seed,
         setting: randomSetting,
         conflict: randomConflict,
         hook: randomHook,
       },
-    });
+    }));
+  },
+
+  rollSetting: () => {
+    const pack = get().getCurrentPack();
+    const { settings } = pack.seeds;
+    if (!settings.length) return;
+    const randomSetting = settings[Math.floor(Math.random() * settings.length)];
+    set((state) => ({
+      seed: { ...state.seed, setting: randomSetting },
+    }));
+  },
+
+  rollConflict: () => {
+    const pack = get().getCurrentPack();
+    const { conflicts } = pack.seeds;
+    if (!conflicts.length) return;
+    const randomConflict = conflicts[Math.floor(Math.random() * conflicts.length)];
+    set((state) => ({
+      seed: { ...state.seed, conflict: randomConflict },
+    }));
+  },
+
+  rollHook: () => {
+    const pack = get().getCurrentPack();
+    const { hooks } = pack.seeds;
+    if (!hooks.length) return;
+    const randomHook = hooks[Math.floor(Math.random() * hooks.length)];
+    set((state) => ({
+      seed: { ...state.seed, hook: randomHook },
+    }));
   },
 
   toggleLock: (key: 'setting' | 'conflict' | 'hook') => {
@@ -136,7 +160,7 @@ export const useStoryStore = create<StoryStore>((set, get) => ({
       id: `${Date.now()}-${Math.random()}`,
       timestamp: Date.now(),
       type: 'loot',
-      title: `🎁 ${selected.name}`,
+      title: selected.name,
       details: `${selected.description} Hook: ${selected.storyHook}`,
       badge: `${selected.rarity.toUpperCase()} • ${selected.type}`,
     };
@@ -157,7 +181,7 @@ export const useStoryStore = create<StoryStore>((set, get) => ({
       id: `${Date.now()}-${Math.random()}`,
       timestamp: Date.now(),
       type: 'creature',
-      title: `🐾 ${selected.name}`,
+      title: selected.name,
       details: `[${selected.demeanor.toUpperCase()}] ${selected.quirk} Hook: ${selected.narrativePrompt}`,
       badge: selected.category,
     };
@@ -178,7 +202,7 @@ export const useStoryStore = create<StoryStore>((set, get) => ({
       id: `${Date.now()}-${Math.random()}`,
       timestamp: Date.now(),
       type: 'twist',
-      title: `⚡ ${selected.title}`,
+      title: selected.title,
       details: `${selected.description} Action: ${selected.quickAction}`,
       badge: selected.complicationType.replace('_', ' ').toUpperCase(),
     };

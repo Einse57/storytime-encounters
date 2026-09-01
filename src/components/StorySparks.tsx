@@ -13,7 +13,6 @@ export const StorySparks: React.FC = () => {
     rollLoot,
     rollCreature,
     rollTwist,
-    rollAllSparks,
     clearSparks,
     clearHistory,
   } = useStoryStore();
@@ -205,16 +204,9 @@ export const StorySparks: React.FC = () => {
         </div>
       </div>
 
-      {/* Action Toolbar */}
-      <div className="flex justify-between items-center px-1 pt-0.5">
-        <button
-          onClick={rollAllSparks}
-          className="btn-tactile bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 hover:from-amber-700 hover:to-yellow-700 text-white font-serif font-bold text-xs py-1.5 px-3 rounded-lg shadow-xs cursor-pointer"
-        >
-          Roll All Sparks
-        </button>
-
-        <div className="flex items-center gap-2">
+      {/* Spark Secondary Controls */}
+      {(sparkHistory.length > 0 || activeLoot || activeCreature || activeTwist) && (
+        <div className="flex justify-end items-center gap-3 px-1 pt-0.5">
           {sparkHistory.length > 0 && (
             <button
               onClick={() => setShowHistory(!showHistory)}
@@ -233,7 +225,7 @@ export const StorySparks: React.FC = () => {
             </button>
           )}
         </div>
-      </div>
+      )}
 
       {/* Spark History Drawer */}
       {showHistory && sparkHistory.length > 0 && (
