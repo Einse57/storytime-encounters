@@ -1,0 +1,39 @@
+name: Weekly Roadmap Proposals
+
+on:
+  schedule:
+    - cron: '0 17 * * 1' # Runs weekly on Mondays at 17:00 UTC (10:00 AM PST)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  propose-roadmap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Propose Roadmap Items
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const dateStr = new Date().toISOString().split('T')[0];
+            const title = `Weekly Roadmap Proposal: ${dateStr}`;
+            const body = `## Storytime Encounters - Weekly Roadmap Recommendations\n\n` +
+              `### 1. Infrastructure: Progressive Web App (PWA) Offline Support\n` +
+              `- Add service worker offline caching so the storytelling cockpit works without internet.\n\n` +
+              `### 2. Feature: Custom Story Pack Builder\n` +
+              `- Modal to create, save, and export custom characters, loot, and settings.\n\n` +
+              `### 3. UI/UX: Bedtime Reading Theater Mode\n` +
+              `- Distraction-free full screen view with enlarged comic illustrations and ambient sound loops.\n`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['roadmap', 'enhancement']
+            });
