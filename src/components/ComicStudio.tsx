@@ -42,13 +42,19 @@ export const ComicStudio: React.FC = () => {
 
   return (
     <div className="space-y-2">
-      {/* Section Header without Emojis */}
+      {/* Section Header */}
       <div className="flex justify-between items-center px-1">
         <div className="flex items-center gap-2">
-          <h3 className="font-serif font-black text-xs sm:text-sm text-gray-900 tracking-tight uppercase">
+          <h3 className={`font-serif font-black text-xs sm:text-sm tracking-tight uppercase ${
+            isScifi ? 'text-white' : 'text-gray-900'
+          }`}>
             STORY PREVIEW
           </h3>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-950 uppercase">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+            isScifi
+              ? 'bg-cyan-950 text-cyan-200 border border-cyan-500/40'
+              : 'bg-amber-200/80 text-amber-950'
+          }`}>
             {currentPreset.name.split('/')[0].trim()}
           </span>
         </div>
@@ -57,7 +63,9 @@ export const ComicStudio: React.FC = () => {
           {panels.length > 0 && (
             <button
               onClick={() => setViewMode(viewMode === 'storybook_page' ? 'comic_grid' : 'storybook_page')}
-              className="text-[11px] font-bold text-amber-900 hover:text-amber-700 underline cursor-pointer"
+              className={`text-[11px] font-bold underline cursor-pointer ${
+                isScifi ? 'text-cyan-400 hover:text-cyan-200' : 'text-amber-900 hover:text-amber-700'
+              }`}
             >
               {viewMode === 'storybook_page' ? 'View Strip' : 'View Storybook'}
             </button>
@@ -66,7 +74,11 @@ export const ComicStudio: React.FC = () => {
           <button
             onClick={generatePanels}
             disabled={isGeneratingStory}
-            className="btn-tactile bg-purple-700 hover:bg-purple-800 text-white font-serif font-bold text-xs py-1 px-3 rounded-lg shadow-xs flex items-center gap-1 cursor-pointer"
+            className={`btn-tactile font-serif font-bold text-xs py-1 px-3 rounded-lg shadow-xs flex items-center gap-1 cursor-pointer text-white ${
+              isScifi
+                ? 'bg-cyan-700 hover:bg-cyan-600'
+                : 'bg-purple-700 hover:bg-purple-800'
+            }`}
           >
             <span>{panels.length > 0 ? 'Rebuild' : 'Build Scenes'}</span>
           </button>
@@ -75,16 +87,28 @@ export const ComicStudio: React.FC = () => {
 
       {/* Main Preview Container */}
       {panels.length === 0 ? (
-        <div className="bg-[#fcf7ec] border border-dashed border-[#d9c49e] rounded-xl p-5 text-center space-y-2">
-          <h4 className="font-serif font-bold text-gray-900 text-xs sm:text-sm">
+        <div className={`border border-dashed rounded-xl p-5 text-center space-y-2 ${
+          isScifi
+            ? 'bg-[#1e293b] border-slate-700 text-slate-100'
+            : 'bg-[#fcf7ec] border-[#d9c49e] text-gray-900'
+        }`}>
+          <h4 className={`font-serif font-bold text-xs sm:text-sm ${
+            isScifi ? 'text-white' : 'text-gray-900'
+          }`}>
             Storybook Scenes Ready to Illustrate
           </h4>
-          <p className="text-xs text-gray-600 max-w-xs mx-auto">
+          <p className={`text-xs max-w-xs mx-auto ${
+            isScifi ? 'text-slate-300' : 'text-gray-600'
+          }`}>
             Tap <strong>Build Scenes</strong> to transform your seeds, sparks, and speech into illustrated story panels.
           </p>
           <button
             onClick={generatePanels}
-            className="btn-tactile bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs py-1.5 px-4 rounded-lg shadow-xs cursor-pointer"
+            className={`btn-tactile text-white font-bold text-xs py-1.5 px-4 rounded-lg shadow-xs cursor-pointer ${
+              isScifi
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500'
+                : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
+            }`}
           >
             Build Scenes Now
           </button>
@@ -92,9 +116,11 @@ export const ComicStudio: React.FC = () => {
       ) : (
         <div className="space-y-2.5">
           {/* Active Preview Panel Card */}
-          <div className="bg-[#fcf7ec] border border-[#1f2937] rounded-xl overflow-hidden shadow-sm">
-            {/* Balanced Artwork Frame (Tuned 20% larger) */}
-            <div className="relative h-36 sm:h-40 bg-slate-950 flex items-center justify-center overflow-hidden border-b border-gray-900">
+          <div className={`rounded-xl overflow-hidden shadow-sm border ${
+            isScifi ? 'bg-[#1e293b] border-slate-700' : 'bg-[#fcf7ec] border-[#1f2937]'
+          }`}>
+            {/* Aspect-Ratio Main Stage */}
+            <div className="aspect-[16/9] w-full bg-black relative flex items-center justify-center overflow-hidden">
               {panels[currentPageIndex]?.imageUrl ? (
                 <img
                   src={panels[currentPageIndex].imageUrl}
@@ -126,10 +152,16 @@ export const ComicStudio: React.FC = () => {
                 </div>
               )}
 
-              {/* Hand-Drawn Style Dialogue Speech Bubble */}
+              {/* Speech Bubble */}
               {panels[currentPageIndex]?.dialogue && (
-                <div className="absolute top-2.5 left-2.5 max-w-[80%] bg-white text-gray-900 border border-gray-900 rounded-xl px-2.5 py-1 text-xs font-sans font-bold shadow-md">
-                  <span className="text-[9px] text-purple-700 block uppercase font-black">
+                <div className={`absolute top-2.5 left-2.5 max-w-[80%] rounded-xl px-2.5 py-1 text-xs font-sans font-bold shadow-md border ${
+                  isScifi
+                    ? 'bg-slate-900/95 text-slate-100 border-cyan-400/80'
+                    : 'bg-white text-gray-900 border-gray-900'
+                }`}>
+                  <span className={`text-[9px] block uppercase font-black ${
+                    isScifi ? 'text-cyan-400' : 'text-purple-700'
+                  }`}>
                     {panels[currentPageIndex].characterName || 'Hero'}
                   </span>
                   {panels[currentPageIndex].dialogue}
@@ -138,17 +170,27 @@ export const ComicStudio: React.FC = () => {
             </div>
 
             {/* Narrative Story Caption & Navigation */}
-            <div className="p-2.5 space-y-2 bg-[#fcf7ec]">
-              <p className="text-gray-900 font-serif text-xs leading-relaxed text-center">
+            <div className={`p-2.5 space-y-2 ${
+              isScifi ? 'bg-[#1e293b]' : 'bg-[#fcf7ec]'
+            }`}>
+              <p className={`font-serif text-xs leading-relaxed text-center ${
+                isScifi ? 'text-slate-200' : 'text-gray-900'
+              }`}>
                 {panels[currentPageIndex]?.caption}
               </p>
 
               {/* Page Navigator */}
-              <div className="flex justify-between items-center pt-1.5 border-t border-amber-200/80">
+              <div className={`flex justify-between items-center pt-1.5 border-t ${
+                isScifi ? 'border-slate-700' : 'border-amber-200/80'
+              }`}>
                 <button
                   onClick={() => setCurrentPageIndex(Math.max(0, currentPageIndex - 1))}
                   disabled={currentPageIndex === 0}
-                  className="btn-tactile bg-amber-900 hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed text-white font-serif font-bold text-xs py-1 px-3 rounded-lg transition-all cursor-pointer"
+                  className={`btn-tactile disabled:opacity-30 disabled:cursor-not-allowed text-white font-serif font-bold text-xs py-1 px-3 rounded-lg transition-all cursor-pointer ${
+                    isScifi
+                      ? 'bg-cyan-800 hover:bg-cyan-700'
+                      : 'bg-amber-900 hover:bg-black'
+                  }`}
                 >
                   Prev
                 </button>
@@ -159,12 +201,16 @@ export const ComicStudio: React.FC = () => {
                       key={idx}
                       onClick={() => setCurrentPageIndex(idx)}
                       className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
-                        idx === currentPageIndex ? 'bg-amber-900 scale-125' : 'bg-amber-300'
+                        idx === currentPageIndex
+                          ? isScifi ? 'bg-cyan-400 scale-125' : 'bg-amber-900 scale-125'
+                          : isScifi ? 'bg-slate-600' : 'bg-amber-300'
                       }`}
                       title={`Page ${idx + 1}`}
                     />
                   ))}
-                  <span className="text-[10px] font-serif font-bold text-amber-950 ml-1">
+                  <span className={`text-[10px] font-serif font-bold ml-1 ${
+                    isScifi ? 'text-cyan-300' : 'text-amber-950'
+                  }`}>
                     {currentPageIndex + 1}/{panels.length}
                   </span>
                 </div>
@@ -174,7 +220,11 @@ export const ComicStudio: React.FC = () => {
                     setCurrentPageIndex(Math.min(panels.length - 1, currentPageIndex + 1))
                   }
                   disabled={currentPageIndex === panels.length - 1}
-                  className="btn-tactile bg-amber-900 hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed text-white font-serif font-bold text-xs py-1 px-3 rounded-lg transition-all cursor-pointer"
+                  className={`btn-tactile disabled:opacity-30 disabled:cursor-not-allowed text-white font-serif font-bold text-xs py-1 px-3 rounded-lg transition-all cursor-pointer ${
+                    isScifi
+                      ? 'bg-cyan-800 hover:bg-cyan-700'
+                      : 'bg-amber-900 hover:bg-black'
+                  }`}
                 >
                   Next
                 </button>
@@ -182,7 +232,7 @@ export const ComicStudio: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Action Toolbar without Emojis */}
+          {/* Quick Action Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-1.5 pt-0.5">
             <div className="flex items-center gap-1">
               {(Object.keys(STYLE_PRESETS) as ComicStyle[]).map((styleKey) => {
@@ -194,8 +244,8 @@ export const ComicStudio: React.FC = () => {
                     onClick={() => setStyle(styleKey)}
                     className={`text-[10px] font-bold px-2 py-0.5 rounded transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-amber-900 text-white shadow-2xs'
-                        : 'bg-white/80 text-gray-700 hover:bg-amber-100 border border-amber-200'
+                        ? isScifi ? 'bg-cyan-600 text-white shadow-2xs' : 'bg-amber-900 text-white shadow-2xs'
+                        : isScifi ? 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700' : 'bg-white/80 text-gray-700 hover:bg-amber-100 border border-amber-200'
                     }`}
                   >
                     {preset.name.split('/')[0].trim()}
@@ -207,7 +257,11 @@ export const ComicStudio: React.FC = () => {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={handleCopyMasterPrompt}
-                className="text-[11px] font-bold text-gray-800 hover:text-black bg-white/90 border border-amber-300 px-2.5 py-0.5 rounded cursor-pointer"
+                className={`text-[11px] font-bold px-2.5 py-0.5 rounded cursor-pointer border ${
+                  isScifi
+                    ? 'bg-slate-800 text-cyan-200 border-slate-700 hover:bg-slate-700'
+                    : 'text-gray-800 hover:text-black bg-white/90 border-amber-300'
+                }`}
                 title="Copy prompt for Gemini Web Chat"
               >
                 <span>{copiedPrompt ? 'Copied' : 'Copy Prompt'}</span>
@@ -215,7 +269,11 @@ export const ComicStudio: React.FC = () => {
 
               <button
                 onClick={handlePrint}
-                className="text-[11px] font-bold text-gray-700 hover:text-black bg-white/90 border border-amber-300 px-2 py-0.5 rounded cursor-pointer"
+                className={`text-[11px] font-bold px-2 py-0.5 rounded cursor-pointer border ${
+                  isScifi
+                    ? 'bg-slate-800 text-cyan-200 border-slate-700 hover:bg-slate-700'
+                    : 'text-gray-700 hover:text-black bg-white/90 border-amber-300'
+                }`}
               >
                 Print
               </button>

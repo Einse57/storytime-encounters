@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
+import { useStoryStore } from '../stores/storyStore';
 
 export const AudioStudio: React.FC = () => {
   const {
@@ -21,6 +22,9 @@ export const AudioStudio: React.FC = () => {
     setGeminiApiKey,
     clearAudioSession,
   } = useAudioRecorder();
+
+  const currentPackId = useStoryStore((s) => s.currentPackId);
+  const isScifi = currentPackId === 'scifi-frontier';
 
   const [showStoryLog, setShowStoryLog] = useState(true);
   const [isApiKeyOpen, setIsApiKeyOpen] = useState(false);
@@ -44,15 +48,19 @@ export const AudioStudio: React.FC = () => {
 
   return (
     <div className="space-y-2">
-      {/* Section Header without Emojis */}
+      {/* Section Header */}
       <div className="flex justify-between items-center px-1">
-        <h3 className="font-serif font-black text-xs sm:text-sm text-gray-900 tracking-tight uppercase">
+        <h3 className={`font-serif font-black text-xs sm:text-sm tracking-tight uppercase ${
+          isScifi ? 'text-white' : 'text-gray-900'
+        }`}>
           Audio Recorder
         </h3>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsApiKeyOpen(!isApiKeyOpen)}
-            className="text-[11px] font-bold text-amber-900 hover:text-amber-700 underline cursor-pointer"
+            className={`text-[11px] font-bold underline cursor-pointer ${
+              isScifi ? 'text-cyan-400 hover:text-cyan-200' : 'text-amber-900 hover:text-amber-700'
+            }`}
           >
             {geminiApiKey ? 'Key Active' : 'API Key'}
           </button>
@@ -61,25 +69,39 @@ export const AudioStudio: React.FC = () => {
 
       {/* API Key Modal Drawer */}
       {isApiKeyOpen && (
-        <div className="bg-[#fcf7ec] border border-[#d9c49e] rounded-xl p-3 space-y-2 text-xs">
+        <div className={`rounded-xl p-3 space-y-2 text-xs border ${
+          isScifi ? 'bg-[#1e293b] border-slate-700 text-slate-100' : 'bg-[#fcf7ec] border-[#d9c49e] text-amber-950'
+        }`}>
           <div className="flex justify-between items-center">
-            <span className="font-bold text-amber-950">Google Gemini API Key</span>
-            <span className="text-[10px] text-gray-500">For AI speech & images</span>
+            <span className={`font-bold ${isScifi ? 'text-cyan-300' : 'text-amber-950'}`}>
+              Google Gemini API Key
+            </span>
+            <span className={`text-[10px] ${isScifi ? 'text-slate-400' : 'text-gray-500'}`}>
+              For AI speech & images
+            </span>
           </div>
           <div className="flex gap-2">
             <input
               type="password"
               value={apiKeyInput}
               onChange={(e) => setApiKeyInput(e.target.value)}
-              placeholder="Paste AI Studio Key (AIzaSy...)"
-              className="flex-1 px-3 py-1.5 border border-amber-300 rounded-lg text-xs bg-white font-mono"
+              placeholder="AIzaSy..."
+              className={`flex-1 px-2.5 py-1.5 border rounded-lg text-xs ${
+                isScifi
+                  ? 'bg-[#0f172a] border-slate-600 text-white placeholder-slate-500 focus:ring-cyan-500'
+                  : 'bg-white border-amber-300 text-gray-900 focus:ring-amber-500'
+              }`}
             />
             <button
               onClick={() => {
                 setGeminiApiKey(apiKeyInput);
                 setIsApiKeyOpen(false);
               }}
-              className="bg-amber-800 hover:bg-amber-900 text-white font-bold px-3 py-1.5 rounded-lg"
+              className={`font-bold px-3 py-1.5 rounded-lg cursor-pointer ${
+                isScifi
+                  ? 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                  : 'bg-amber-800 hover:bg-amber-900 text-white'
+              }`}
             >
               Save
             </button>
@@ -87,9 +109,13 @@ export const AudioStudio: React.FC = () => {
         </div>
       )}
 
-      {/* Capsule Pod (Slim & Proportional) */}
-      <div className="bg-[#f5ebd6] border-2 border-[#d4b98b] rounded-xl p-2 shadow-xs flex items-center justify-between gap-2.5 relative overflow-hidden">
-        {/* Left: Compact Embossed Golden REC Button */}
+      {/* Capsule Pod */}
+      <div className={`rounded-xl p-2 shadow-xs flex items-center justify-between gap-2.5 relative overflow-hidden border-2 ${
+        isScifi
+          ? 'bg-[#1e293b] border-cyan-500/40 text-slate-100'
+          : 'bg-[#f5ebd6] border-[#d4b98b] text-[#2c1810]'
+      }`}>
+        {/* Left: Compact Embossed REC Button */}
         <button
           onClick={handleRecordToggle}
           className={`btn-tactile flex-shrink-0 w-10 h-10 rounded-full rec-pod-outer flex flex-col items-center justify-center cursor-pointer select-none ${
@@ -109,7 +135,7 @@ export const AudioStudio: React.FC = () => {
           </span>
         </button>
 
-        {/* Center: Golden Animated Soundwave Visualizer */}
+        {/* Center: Soundwave Visualizer */}
         <div className="flex-1 flex flex-col justify-center min-w-0 px-1">
           <div className="flex items-center justify-center gap-0.5 sm:gap-1 h-6">
             {waveformBars.map((bar, i) => {
@@ -120,7 +146,9 @@ export const AudioStudio: React.FC = () => {
                   className="w-1 sm:w-1.5 rounded-full transition-all duration-75"
                   style={{
                     height: `${height}px`,
-                    backgroundColor: recordingState === 'recording' ? '#d97706' : '#c9a875',
+                    backgroundColor: isScifi
+                      ? recordingState === 'recording' ? '#38bdf8' : '#0ea5e9'
+                      : recordingState === 'recording' ? '#d97706' : '#c9a875',
                   }}
                 />
               );
@@ -128,7 +156,9 @@ export const AudioStudio: React.FC = () => {
           </div>
 
           <div className="text-center mt-0.5">
-            <span className="font-mono font-bold text-[10px] text-amber-950 uppercase tracking-wider">
+            <span className={`font-mono font-bold text-[10px] uppercase tracking-wider ${
+              isScifi ? 'text-cyan-300' : 'text-amber-950'
+            }`}>
               {recordingState === 'recording'
                 ? `RECORDING ${formatTimer(recordingDuration)}`
                 : recordingState === 'paused'
@@ -144,7 +174,9 @@ export const AudioStudio: React.FC = () => {
         <div className="flex-shrink-0 pr-1 flex flex-col items-end gap-1">
           <button
             onClick={() => setShowStoryLog(!showStoryLog)}
-            className="font-serif font-bold text-xs text-amber-950 hover:text-amber-800 underline cursor-pointer select-none"
+            className={`font-serif font-bold text-xs underline cursor-pointer select-none ${
+              isScifi ? 'text-cyan-400 hover:text-cyan-200' : 'text-amber-950 hover:text-amber-800'
+            }`}
           >
             Story Log
           </button>
@@ -152,7 +184,11 @@ export const AudioStudio: React.FC = () => {
           {recordingState === 'recording' && (
             <button
               onClick={pauseRecording}
-              className="text-[10px] font-bold bg-amber-200/80 text-amber-950 px-2 py-0.5 rounded-full cursor-pointer"
+              className={`text-[10px] font-bold px-2 py-0.5 rounded-full cursor-pointer ${
+                isScifi
+                  ? 'bg-cyan-900/80 text-cyan-200'
+                  : 'bg-amber-200/80 text-amber-950'
+              }`}
             >
               Pause
             </button>
@@ -161,7 +197,7 @@ export const AudioStudio: React.FC = () => {
           {audioBlob && recordingState === 'idle' && (
             <button
               onClick={clearAudioSession}
-              className="text-[10px] font-bold text-rose-700 hover:underline cursor-pointer"
+              className="text-[10px] font-bold text-rose-400 hover:underline cursor-pointer"
             >
               Reset
             </button>
@@ -171,12 +207,16 @@ export const AudioStudio: React.FC = () => {
 
       {/* Audio Playback Bar if audio exists */}
       {audioBlobUrl && (
-        <div className="bg-amber-50/80 border border-amber-300 rounded-lg p-2 flex items-center justify-between gap-2">
+        <div className={`rounded-lg p-2 flex items-center justify-between gap-2 border ${
+          isScifi
+            ? 'bg-slate-900 border-slate-700 text-slate-200'
+            : 'bg-amber-50/80 border-amber-300'
+        }`}>
           <audio controls src={audioBlobUrl} className="h-6 flex-1" />
           <a
             href={audioBlobUrl}
             download="storytime-recording.webm"
-            className="btn-tactile bg-amber-900 text-white text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap"
+            className="btn-tactile bg-amber-900 text-white text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap cursor-pointer"
           >
             Save .webm
           </a>
@@ -191,12 +231,24 @@ export const AudioStudio: React.FC = () => {
             onChange={(e) => setTranscript(e.target.value)}
             placeholder="Your spoken adventure streams here in real time as you tell your story... You can also type or edit anytime."
             rows={3}
-            className="w-full p-2.5 border border-[#d9c49e] rounded-xl focus:ring-2 focus:ring-amber-500 text-gray-900 font-serif leading-relaxed text-xs bg-white shadow-2xs resize-y"
+            className={`w-full p-2.5 border rounded-xl font-serif leading-relaxed text-xs shadow-2xs resize-y transition-colors ${
+              isScifi
+                ? 'bg-[#0b1329] border-slate-700 text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-cyan-500'
+                : 'bg-white border-[#d9c49e] text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-amber-500'
+            }`}
           />
 
           {liveInterimText && (
-            <div className="absolute bottom-2 left-2 right-2 bg-amber-100/95 border border-amber-300 rounded-lg p-1.5 text-xs text-amber-950 italic font-serif pointer-events-none shadow-sm">
-              <span className="font-bold text-amber-800 not-italic uppercase text-[9px] block">Listening:</span>
+            <div className={`absolute bottom-2 left-2 right-2 rounded-lg p-1.5 text-xs italic font-serif pointer-events-none shadow-sm border ${
+              isScifi
+                ? 'bg-slate-900/95 border-cyan-500/40 text-cyan-200'
+                : 'bg-amber-100/95 border-amber-300 text-amber-950'
+            }`}>
+              <span className={`font-bold not-italic uppercase text-[9px] block ${
+                isScifi ? 'text-cyan-400' : 'text-amber-800'
+              }`}>
+                Listening:
+              </span>
               {liveInterimText}...
             </div>
           )}
@@ -205,7 +257,11 @@ export const AudioStudio: React.FC = () => {
             <button
               onClick={transcribeWithGemini}
               disabled={isTranscribingWithGemini}
-              className="btn-tactile mt-1 text-xs font-bold text-purple-800 bg-purple-100 hover:bg-purple-200 px-3 py-1.5 rounded-lg border border-purple-300 flex items-center gap-1 cursor-pointer"
+              className={`btn-tactile mt-1 text-xs font-bold px-3 py-1.5 rounded-lg border flex items-center gap-1 cursor-pointer ${
+                isScifi
+                  ? 'bg-cyan-950/80 text-cyan-200 border-cyan-500/50 hover:bg-cyan-900'
+                  : 'text-purple-800 bg-purple-100 hover:bg-purple-200 border-purple-300'
+              }`}
             >
               <span>{isTranscribingWithGemini ? 'Transcribing...' : 'AI Enhance Transcript (Gemini)'}</span>
             </button>
