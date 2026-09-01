@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useDiceStore, type DiceRoll } from '../stores/diceStore';
+import { useStoryStore } from '../stores/storyStore';
 
 export const DiceRoller: React.FC = () => {
   const { rollHistory, addRoll, clearHistory } = useDiceStore();
+  const currentPackId = useStoryStore((s) => s.currentPackId);
+  const isScifi = currentPackId === 'scifi-frontier';
 
   const [lastD6, setLastD6] = useState<number | null>(null);
   const [lastD10, setLastD10] = useState<number | null>(null);
@@ -37,12 +40,16 @@ export const DiceRoller: React.FC = () => {
     <div className="space-y-2.5">
       {/* Section Header */}
       <div className="flex justify-between items-center px-1">
-        <h3 className="font-serif font-extrabold text-sm sm:text-base text-gray-900 tracking-tight">
+        <h3 className={`font-serif font-extrabold text-sm sm:text-base tracking-tight ${
+          isScifi ? 'text-white' : 'text-gray-900'
+        }`}>
           1-Tap Quick Dice
         </h3>
         <button
           onClick={() => setShowAllDice(!showAllDice)}
-          className="text-[11px] font-bold text-amber-900 hover:text-amber-700 underline cursor-pointer"
+          className={`text-[11px] font-bold underline cursor-pointer ${
+            isScifi ? 'text-cyan-400 hover:text-cyan-200' : 'text-amber-900 hover:text-amber-700'
+          }`}
         >
           {showAllDice ? 'Fewer Dice' : '+ More Dice'}
         </button>
@@ -116,10 +123,10 @@ export const DiceRoller: React.FC = () => {
 
       {/* Expanded Extra Dice if Toggled - Pure White Text */}
       {showAllDice && (
-        <div className="grid grid-cols-4 gap-2 sm:gap-2.5 pt-1">
+        <div className="grid grid-cols-4 gap-2 pt-1">
           <button
             onClick={() => executeRoll(1, 4, '1d4 Minor')}
-            className="dice-btn-3d dice-btn-purple py-2.5 px-2 flex flex-col items-center justify-center cursor-pointer"
+            className="dice-btn-3d dice-btn-green py-2.5 px-2 flex flex-col items-center justify-center cursor-pointer"
             style={{ color: '#ffffff' }}
           >
             <span className="font-serif font-black text-xs drop-shadow-md" style={{ color: '#ffffff' }}>D4</span>
@@ -150,10 +157,14 @@ export const DiceRoller: React.FC = () => {
 
       {/* Roll History Drawer */}
       {rollHistory.length > 0 && (
-        <div className="bg-[#fcf7ec] border border-[#d9c49e] rounded-xl p-2.5 space-y-1.5">
-          <div className="flex justify-between items-center text-[11px] font-serif font-bold text-amber-950">
+        <div className={`rounded-xl p-2.5 space-y-1.5 border ${
+          isScifi ? 'bg-[#1e293b] border-slate-700 text-slate-100' : 'bg-[#fcf7ec] border-[#d9c49e] text-amber-950'
+        }`}>
+          <div className={`flex justify-between items-center text-[11px] font-serif font-bold ${
+            isScifi ? 'text-cyan-300' : 'text-amber-950'
+          }`}>
             <span>Latest Roll:</span>
-            <button onClick={clearHistory} className="text-rose-700 hover:underline cursor-pointer">
+            <button onClick={clearHistory} className="text-rose-400 hover:underline cursor-pointer">
               Clear
             </button>
           </div>
@@ -161,9 +172,13 @@ export const DiceRoller: React.FC = () => {
             {rollHistory.slice(0, 5).map((r) => (
               <span
                 key={r.id}
-                className="bg-white border border-amber-300 rounded-lg px-2 py-0.5 text-xs font-mono font-bold text-gray-800 whitespace-nowrap"
+                className={`border rounded-lg px-2 py-0.5 text-xs font-mono font-bold whitespace-nowrap ${
+                  isScifi
+                    ? 'bg-slate-900 border-cyan-500/40 text-cyan-200'
+                    : 'bg-white border-amber-300 text-gray-800'
+                }`}
               >
-                d{r.dieType}: <strong className="text-amber-800">{r.total}</strong>
+                d{r.dieType}: <strong className={isScifi ? 'text-white' : 'text-amber-800'}>{r.total}</strong>
               </span>
             ))}
           </div>
