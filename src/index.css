@@ -37,12 +37,13 @@ h1, h2, h3, .font-serif {
   transform: scale(0.95) translateY(1px);
 }
 
-/* 3D Chunky Dice Buttons (Matching Mockup) */
 .dice-btn-3d {
   position: relative;
   border-radius: 1.25rem;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25), 0 8px 16px rgba(0, 0, 0, 0.15);
   transition: all 0.12s ease;
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
 }
 .dice-btn-3d:active {
   transform: translateY(3px);
@@ -50,23 +51,23 @@ h1, h2, h3, .font-serif {
 }
 
 .dice-btn-red {
-  background: linear-gradient(180deg, #f87171 0%, #dc2626 50%, #991b1b 100%);
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #991b1b 100%);
   border: 2px solid #fca5a5;
 }
 .dice-btn-blue {
-  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 50%, #0c4a6e 100%);
   border: 2px solid #7dd3fc;
 }
 .dice-btn-gold {
-  background: linear-gradient(180deg, #fde047 0%, #d97706 50%, #92400e 100%);
-  border: 2px solid #fef08a;
+  background: linear-gradient(180deg, #d97706 0%, #b45309 50%, #78350f 100%);
+  border: 2px solid #fde68a;
 }
 .dice-btn-green {
-  background: linear-gradient(180deg, #4ade80 0%, #16a34a 50%, #14532d 100%);
+  background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #14532d 100%);
   border: 2px solid #86efac;
 }
 .dice-btn-purple {
-  background: linear-gradient(180deg, #c084fc 0%, #9333ea 50%, #581c87 100%);
+  background: linear-gradient(180deg, #9333ea 0%, #7e22ce 50%, #581c87 100%);
   border: 2px solid #e9d5ff;
 }
 
