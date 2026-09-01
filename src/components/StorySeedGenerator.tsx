@@ -9,7 +9,6 @@ export const StorySeedGenerator: React.FC = () => {
   const rollSetting = useStoryStore((s) => s.rollSetting);
   const rollConflict = useStoryStore((s) => s.rollConflict);
   const rollHook = useStoryStore((s) => s.rollHook);
-  const randomizeSeed = useStoryStore((s) => s.randomizeSeed);
   const currentPackId = useStoryStore((s) => s.currentPackId);
 
   useEffect(() => {
@@ -175,20 +174,6 @@ export const StorySeedGenerator: React.FC = () => {
             {seed.hook || 'Generating hook...'}
           </p>
         </div>
-      </div>
-
-      {/* Action Toolbar */}
-      <div className="flex justify-between items-center px-1 pt-0.5">
-        <button
-          onClick={randomizeSeed}
-          className="btn-tactile bg-gradient-to-r from-amber-700 via-amber-800 to-amber-900 hover:from-amber-800 hover:to-amber-950 text-amber-100 font-serif font-bold text-xs py-1.5 px-3.5 rounded-lg shadow-xs cursor-pointer border border-amber-600/40"
-        >
-          Roll All Seeds
-        </button>
-
-        <span className="text-[11px] font-serif italic text-amber-900/70">
-          Tap any card to reroll
-        </span>
       </div>
     </div>
   );
