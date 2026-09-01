@@ -4,6 +4,8 @@ import { useAudioStore } from '../stores/audioStore';
 import { STYLE_PRESETS, buildMasterGeminiPrompt } from '../utils/promptEngine';
 import type { ComicStyle } from '../types/comic';
 import comicSceneDefaultImg from '../assets/comic_scene_default.webp';
+import scifiSceneDefaultImg from '../assets/scifi_scene_default.webp';
+import { useStoryStore } from '../stores/storyStore';
 
 export const ComicStudio: React.FC = () => {
   const {
@@ -20,6 +22,8 @@ export const ComicStudio: React.FC = () => {
   } = useComicStore();
 
   const { geminiApiKey } = useAudioStore();
+  const currentPackId = useStoryStore((s) => s.currentPackId);
+  const isScifi = currentPackId === 'scifi-frontier';
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
   const currentPreset = STYLE_PRESETS[selectedStyle];
@@ -104,7 +108,7 @@ export const ComicStudio: React.FC = () => {
               ) : (
                 <div className="relative w-full h-full">
                   <img
-                    src={comicSceneDefaultImg}
+                    src={isScifi ? scifiSceneDefaultImg : comicSceneDefaultImg}
                     alt="Comic Scene Adventure"
                     className="w-full h-full object-cover"
                   />

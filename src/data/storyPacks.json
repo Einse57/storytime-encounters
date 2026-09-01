@@ -2,7 +2,7 @@
   {
     "id": "high-fantasy",
     "title": "High Fantasy & Legends",
-    "icon": "⚔️",
+    "icon": "fantasy",
     "genre": "fantasy",
     "description": "Epic castles, enchanted woods, forgotten dungeons, and ancient magic.",
     "seeds": {
@@ -58,7 +58,11 @@
         "and the only person with the answer is currently trapped inside a magic painting",
         "while an approaching solar eclipse threatens to make the catastrophe permanent",
         "and an old friend desperately waves to them from across the crowded square",
-        "with the fate of the entire valley resting on a single brave decision"
+        "because the clockwork clocktower has struck thirteen times",
+        "prompting an eccentric alchemist to hire the party on the spot",
+        "leaving only a trail of glittering blue dust leading into the sewers",
+        "just as an ominous horn sounds from the distant mountain peaks",
+        "and the royal herald announces a reward that could change their lives"
       ]
     },
     "sparks": {
@@ -93,7 +97,7 @@
           "type": "Trinket",
           "rarity": "common",
           "description": "A small velvet pouch that never empties, seasoning any bland trail ration into a gourmet feast.",
-          "storyHook": "Can be thrown into a monster's eyes in a pinch to create a flavorful diversion!"
+          "storyHook": "Can be thrown into a monster's eyes in a pinch to create a flavorful diversion."
         },
         {
           "id": "loot-5",
@@ -138,52 +142,52 @@
         {
           "id": "loot-10",
           "name": "Crown of the Verdant Monarch",
-          "type": "Relic",
+          "type": "Accessory",
           "rarity": "legendary",
-          "description": "A circlet of living ironwood branches blooming with perpetual jasmine flowers.",
-          "storyHook": "Allows the wearer to command plants to entangle foes or sprout bridges over chasms."
+          "description": "A circlet woven of living gold ivy and glowing emerald acorns that never wither.",
+          "storyHook": "Commands deep respect from ancient tree-spirits and can cause plant vines to rapidly bloom on command."
         }
       ],
       "creatures": [
         {
           "id": "creature-1",
-          "name": "Barnaby the Goblin Cook",
-          "category": "Humanoid / Goblin",
-          "demeanor": "mischievous",
-          "quirk": "Wears a chef hat far too big for his ears and carries a massive iron stew ladle as a weapon.",
-          "narrativePrompt": "Offers to trade secret dungeon routes in exchange for rare spices or shiny spoons."
+          "name": "Barnaby the Bumbling Alchemist",
+          "category": "Humanoid / NPC",
+          "demeanor": "friendly",
+          "quirk": "Constantly muttering potion recipes under his breath, eyebrows singed from testing.",
+          "narrativePrompt": "Needs a brave hero to retrieve a glowing phosphorescent toad from the well."
         },
         {
           "id": "creature-2",
-          "name": "Mossback, the Elder Treant",
-          "category": "Plant / Giant",
-          "demeanor": "friendly",
-          "quirk": "Speaks so slowly that moss literally grows while he finishes a sentence.",
-          "narrativePrompt": "He was mistaken for a bridge, but when the party steps onto him, his sleepy eyes open."
+          "name": "Mossback the Ancient Tortoise",
+          "category": "Beast / Elder",
+          "demeanor": "cautious",
+          "quirk": "Carries an entire miniature fairy grove on his moss-covered shell.",
+          "narrativePrompt": "Will only speak in slow, deep rhyming riddles to test the party's patience."
         },
         {
           "id": "creature-3",
-          "name": "Cinder, the Baby Pyredrake",
-          "category": "Dragonkin",
-          "demeanor": "cautious",
-          "quirk": "Sneezes tiny sparks whenever startled and hoards shiny copper buttons.",
-          "narrativePrompt": "Separated from its mother, it has decided the hero's backpack is its new nest."
+          "name": "Sparky the Baby Fire Drake",
+          "category": "Dragon",
+          "demeanor": "mischievous",
+          "quirk": "Sneezes tiny sparks of purple flame whenever he gets excited or hungry.",
+          "narrativePrompt": "Mistook the warrior's shiny shield for his favorite sunbathing rock."
         },
         {
           "id": "creature-4",
-          "name": "Sir Reginald, the Ghost Knight",
-          "category": "Undead / Spirit",
+          "name": "Lady Vespera of the Mist",
+          "category": "Undead / Spectral",
           "demeanor": "mysterious",
-          "quirk": "Constantly polishes translucent spectral armor that cannot get dirty.",
-          "narrativePrompt": "Guards the ancient doorway and demands a riddle or chivalrous duel before letting anyone pass."
+          "quirk": "Her gown drifts on an invisible breeze; she plays a melancholy silver flute.",
+          "narrativePrompt": "Offers safe passage through the foggy swamp in exchange for a genuine, heartfelt memory."
         },
         {
           "id": "creature-5",
-          "name": "Bramblecat",
-          "category": "Beast / Magical",
+          "name": "Thistle the Hedge-Knight",
+          "category": "Humanoid / Fey",
           "demeanor": "friendly",
-          "quirk": "A feline made of flowering rosebushes with thorn claws that purrs like rustling leaves.",
-          "narrativePrompt": "Guides the adventurers along hidden paths through dangerous thorn brambles."
+          "quirk": "A 2-foot tall hedgehog clad in acorn-plate armor wielding a polished pine-needle spear.",
+          "narrativePrompt": "Challenges the largest party member to an honorable duel of polite courtesy."
         },
         {
           "id": "creature-6",
@@ -216,28 +220,28 @@
           "title": "Sudden Arcane Fog",
           "complicationType": "environmental",
           "description": "A thick, shimmering lavender mist rolls in, dampening sound and causing shadows to dance on their own.",
-          "quickAction": "Roll a Perception check (DC 13) to avoid getting separated!"
+          "quickAction": "Roll a Perception check (DC 13) to avoid getting separated."
         },
         {
           "id": "twist-2",
-          "title": "The Fake Artifact!",
+          "title": "The Decoy Artifact",
           "complicationType": "mystery",
-          "description": "Upon closer inspection, the treasure they found is made of painted chocolate—or an illusion spell!",
+          "description": "Upon closer inspection, the treasure they found is an illusion or a clever carved replica.",
           "quickAction": "Where did the real treasure go, and who left the decoy?"
         },
         {
           "id": "twist-3",
           "title": "Unexpected Reinforcements",
           "complicationType": "surprise_visitor",
-          "description": "A runaway wagon driven by a chaotic gnome tinkerer crashes directly into the scene!",
-          "quickAction": "The crash disrupts the standoff—how does the party react to the chaos?"
+          "description": "A runaway wagon driven by a chaotic gnome tinkerer crashes directly into the scene.",
+          "quickAction": "The crash disrupts the standoff; how does the party react to the chaos?"
         },
         {
           "id": "twist-4",
           "title": "Collapsing Floorboards",
           "complicationType": "environmental",
           "description": "The ground beneath their feet cracks loudly and crumbles into an underground canal.",
-          "quickAction": "Roll an Agility/Dexterity check (DC 14) to grab a ledge or dive to safety!"
+          "quickAction": "Roll an Agility/Dexterity check (DC 14) to grab a ledge or dive to safety."
         },
         {
           "id": "twist-5",
@@ -252,6 +256,221 @@
           "complicationType": "mystery",
           "description": "Leaning against the wall accidentally triggers a hidden lever, swinging open a dusty bookshelf passage.",
           "quickAction": "Does the party investigate the drafty secret tunnel or stay on their current path?"
+        }
+      ]
+    }
+  },
+  {
+    "id": "scifi-frontier",
+    "title": "Grim Frontier & Starships",
+    "icon": "scifi",
+    "genre": "scifi",
+    "description": "Derelict space hulks, orbital dropzones, cybernetic outlaws, and alien hazards.",
+    "seeds": {
+      "settings": [
+        "a derelict orbital battlecruiser drifting through an asteroid graveyard",
+        "a neon-soaked subterranean black market on a desolate mining moon",
+        "an orbital dropzone perched over an active radioactive planetary caldera",
+        "an abandoned terraforming facility overrun with bio-luminescent alien flora",
+        "a crowded frontier starport cantina on the lawless edge of syndicate space",
+        "a submerged research outpost beneath the methane ice of a rogue planet",
+        "a quarantined penal colony orbiting a dying crimson star",
+        "a high-altitude atmospheric gas-harvesting rig trapped in a planetary storm",
+        "a rust-covered salvage yard outside a decommissioned dreadnought foundry",
+        "a hidden rebel listening post buried inside an uncharted hollow asteroid",
+        "an ancient alien orbital ring whose defensive laser batteries are firing randomly",
+        "a sprawling cybernetic megacity where acid rain falls through multi-tier transit bridges",
+        "a crash-landed colony transport surrounded by territorial razor-beasts",
+        "a deep-space fuel refinery caught in the gravity well of a neutron star",
+        "a militarized checkpoint controlling the only stable hyperlane jump gate",
+        "an eerie crystalline planet surface where radio signals repeat crew memories"
+      ],
+      "conflicts": [
+        "The station artificial gravity has failed and orbital decay has begun",
+        "A rogue combat AI has hijacked the automated perimeter defense turrets",
+        "A syndicate enforcer squad has locked down the starship docking berths",
+        "An encrypted military distress beacon is broadcasting on an imperial channel",
+        "An alien parasitic organism has breached biosafety containment in cargo bay 4",
+        "Pirate corsairs have disabled the jump-drive with high-yield ion torpedoes",
+        "Atmospheric radiation shields are collapsing under severe solar flare bombardment",
+        "A volatile dark-matter hyperdrive core is undergoing critical thermal runaway",
+        "Automated salvage droids have mistaken the crew's starship for scrap metal",
+        "A rival bounty hunter crew is breaching the rear airlock with thermal lances",
+        "The colony water synthesis grid has been poisoned with synthetic neuro-toxins",
+        "Local planetary defense cannons are charging for an unprovoked orbital bombardment"
+      ],
+      "hooks": [
+        "and the crew navigation computer has been wiped by a stealth EMP payload",
+        "but the syndicate bounty requires bringing the target back breathing and conscious",
+        "unless the decrypted star-charts can be transmitted before the comms jammer peaks",
+        "with only an unshielded plasma torch and three pulse rounds remaining in the magazine",
+        "forcing an uneasy truce with a cybernetic outlaw who holds the override codes",
+        "while a five-minute countdown blares across the station emergency evacuation klaxons",
+        "and the distress signal originates from a vessel that disappeared forty years ago",
+        "because the station automated defense grid recognizes the heroes as escaped fugitives",
+        "leaving only a smoking trail of severed fiber-optic cables and glowing green coolant",
+        "prompting a rogue synthetic droid to offer them the only surviving jump pod"
+      ]
+    },
+    "sparks": {
+      "loot": [
+        {
+          "id": "loot-scifi-1",
+          "name": "Overcharged Plasma Scattergun",
+          "type": "Weapon",
+          "rarity": "rare",
+          "description": "A heavy-bore frontier scattergun modified with exposed copper heat sinks and cobalt energy coils.",
+          "storyHook": "Fires a devastating cone of superheated ionization that melts through bulkheads."
+        },
+        {
+          "id": "loot-scifi-2",
+          "name": "Military Combat Nanite Stim",
+          "type": "Consumable",
+          "rarity": "uncommon",
+          "description": "A pressurized steel injector containing luminescent gold bio-nanites that rapidly knit flesh and armor.",
+          "storyHook": "Provides instant wound stabilization and a temporary surge of adrenaline for 60 seconds."
+        },
+        {
+          "id": "loot-scifi-3",
+          "name": "Thermal Camouflage Shroud",
+          "type": "Armor",
+          "rarity": "very rare",
+          "description": "A lightweight tactical cape woven from adaptive refractive polymer fibers that bend light and heat.",
+          "storyHook": "Renders the wearer completely invisible to infrared scanners and automated sensor turrets."
+        },
+        {
+          "id": "loot-scifi-4",
+          "name": "Holographic Decoy Emitter",
+          "type": "Trinket",
+          "rarity": "uncommon",
+          "description": "A pocket-sized magnetic cylinder that projects three lifelike holographic soldiers performing tactical maneuvers.",
+          "storyHook": "Can be thrown into a corridor to draw hostile laser fire and confuse targeting sensors."
+        },
+        {
+          "id": "loot-scifi-5",
+          "name": "Refined Coaxium Energy Cell",
+          "type": "Resource",
+          "rarity": "rare",
+          "description": "A heavy magnetic containment flask filled with swirling cerulean hyper-dense starship fuel.",
+          "storyHook": "Can power a jump-drive for a lightyear or be wired to create a catastrophic bunker-busting blast."
+        },
+        {
+          "id": "loot-scifi-6",
+          "name": "High-Frequency Vibro-Blade",
+          "type": "Weapon",
+          "rarity": "uncommon",
+          "description": "A black titanium trench sword that oscillates at sonic frequencies, humming with lethal vibration.",
+          "storyHook": "Slices through reinforced blast doors and power conduits like butter."
+        },
+        {
+          "id": "loot-scifi-7",
+          "name": "Syndicate Black-Box Datapad",
+          "type": "Key Item",
+          "rarity": "rare",
+          "description": "A hardened military datapad containing decrypted contraband ledger routes and imperial blackmail.",
+          "storyHook": "Grants access to encrypted weapon caches across the sector, but marks the bearer for syndicate assassination."
+        },
+        {
+          "id": "loot-scifi-8",
+          "name": "Personal Kinetic Barrier Belt",
+          "type": "Accessory",
+          "rarity": "very rare",
+          "description": "A heavy utility belt equipped with hexagonal grav-projectors that snap a blue kinetic shield into place.",
+          "storyHook": "Deflects three direct incoming ballistic or energy blasts before requiring a 10-minute recharge."
+        }
+      ],
+      "creatures": [
+        {
+          "id": "creature-scifi-1",
+          "name": "V-88 'Ravage' Heavy Assault Mech",
+          "category": "Synthetic / War Machine",
+          "demeanor": "hostile",
+          "quirk": "Its targeting optics flicker between friend and foe identification protocols while its minigun spins.",
+          "narrativePrompt": "Patrolling a derelict armory, scanning the party with high-intensity targeting lasers."
+        },
+        {
+          "id": "creature-scifi-2",
+          "name": "Chitinous Apex Void-Stalker",
+          "category": "Alien / Predator",
+          "demeanor": "cautious",
+          "quirk": "Clings silently to ceiling ventilation grates, clicking its mandibles in biological morse code.",
+          "narrativePrompt": "Stalks the party from the shadows, evaluating which traveler is carrying energy cells."
+        },
+        {
+          "id": "creature-scifi-3",
+          "name": "Rusty-7 the Scrapper Droid",
+          "category": "Droid / NPC",
+          "demeanor": "friendly",
+          "quirk": "Communicates through compressed radio static and sarcastic maintenance beeps, eager for spare bolts.",
+          "narrativePrompt": "Offers to hotwire the hangar blast doors in exchange for an intact power converter."
+        },
+        {
+          "id": "creature-scifi-4",
+          "name": "Captain Jax of the Freebooters",
+          "category": "Humanoid / Scoundrel",
+          "demeanor": "mischievous",
+          "quirk": "Twirls an antique silver credits chip between his cybernetic fingers while assessing the odds.",
+          "narrativePrompt": "Offers the party a fast escape on his smuggler freighter for a 40 percent cut of their salvage."
+        },
+        {
+          "id": "creature-scifi-5",
+          "name": "Alpha-6 Null Hound",
+          "category": "Bio-Synthetic / Beast",
+          "demeanor": "hostile",
+          "quirk": "An armored quad-legged cybernetic tracker that smells ionized gunsmoke and adrenaline from 500 meters.",
+          "narrativePrompt": "Has picked up the party scent and leads a squad of syndicate search drones."
+        },
+        {
+          "id": "creature-scifi-6",
+          "name": "Dr. Aris Thorne the Exiled Xenobiologist",
+          "category": "Humanoid / Scholar",
+          "demeanor": "mysterious",
+          "quirk": "Wears a sealed hazmat environment suit with a cracked visor, obsessively recording alien spore samples.",
+          "narrativePrompt": "Warns the party that the biological containment breach below is worse than they think."
+        }
+      ],
+      "twists": [
+        {
+          "id": "twist-scifi-1",
+          "title": "Artificial Gravity Deactivation",
+          "complicationType": "environmental",
+          "description": "A sickening hum resonates as the deckplates lose gravity. Debris, cargo crates, and crew float into zero-g chaos.",
+          "quickAction": "Roll an Agility or Athletics check (DC 13) to grab a magnetic handrail before colliding with floating debris."
+        },
+        {
+          "id": "twist-scifi-2",
+          "title": "Atmospheric Hull Breach",
+          "complicationType": "environmental",
+          "description": "A stray projectile or structural fissure shatters a viewport; explosive decompression begins sucking oxygen into the vacuum.",
+          "quickAction": "Seal your environmental helmets within 2 rounds or activate the emergency blast shutters."
+        },
+        {
+          "id": "twist-scifi-3",
+          "title": "Emergency Reactor Overheat",
+          "complicationType": "magical_surge",
+          "description": "Red emergency alert sirens wail as the reactor containment cores exceed safe operating temperatures.",
+          "quickAction": "A technician must vent the plasma coolant tubes manually or the section will suffer meltdown."
+        },
+        {
+          "id": "twist-scifi-4",
+          "title": "Syndicate Boarding Pod Inbound",
+          "complicationType": "surprise_visitor",
+          "description": "Heavy magnetic clamps slam onto the outer hull followed by the shrieking whine of plasma breaching drills.",
+          "quickAction": "Take cover and set up a defensive perimeter before the syndicate shocktroopers blow the hatch."
+        },
+        {
+          "id": "twist-scifi-5",
+          "title": "High-Frequency EMP Pulse",
+          "complicationType": "environmental",
+          "description": "An unexpected energy discharge ripples through the sector, shorting out all primary energy weapons, shields, and flashlights.",
+          "quickAction": "Flick on auxiliary emergency chem-lights and rely on kinetic or physical tactics."
+        },
+        {
+          "id": "twist-scifi-6",
+          "title": "Distress Signal Was an Ambush Trap",
+          "complicationType": "betrayal",
+          "description": "The broadcast beacon was an automated decoy rigged to trigger automated stun nets and tracking tags.",
+          "quickAction": "The decoy is transmitting your exact coordinates to nearby predator vessels; disable the beacon fast."
         }
       ]
     }
