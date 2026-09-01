@@ -1,3 +1,123 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root, [data-theme="fantasy"], [data-theme="high-fantasy"] {
+  --theme-bg: #f5eedc;
+  --theme-surface: #fdfbf7;
+  --theme-card-border: #d4b98b;
+  --theme-primary: #8b5cf6;
+  --theme-primary-hover: #7c3aed;
+  --theme-accent-gold: #d97706;
+  --theme-glow: rgba(217, 119, 6, 0.2);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--theme-bg);
+  background-image: 
+    radial-gradient(ellipse at top, rgba(254, 240, 138, 0.15), transparent 70%),
+    radial-gradient(ellipse at bottom, rgba(180, 83, 9, 0.08), transparent 70%);
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, .font-serif {
+  font-family: 'Cinzel', Georgia, 'Times New Roman', serif;
+}
+
+.font-medieval {
+  font-family: 'MedievalSharp', 'Cinzel', serif;
+}
+
+/* Tactile button animations */
+.btn-tactile {
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s ease, filter 0.1s ease;
+}
+.btn-tactile:active {
+  transform: scale(0.95) translateY(1px);
+}
+
+/* 3D Chunky Dice Buttons (Matching Mockup) */
+.dice-btn-3d {
+  position: relative;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25), 0 8px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.12s ease;
+}
+.dice-btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.dice-btn-red {
+  background: linear-gradient(180deg, #f87171 0%, #dc2626 50%, #991b1b 100%);
+  border: 2px solid #fca5a5;
+}
+.dice-btn-blue {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+  border: 2px solid #7dd3fc;
+}
+.dice-btn-gold {
+  background: linear-gradient(180deg, #fde047 0%, #d97706 50%, #92400e 100%);
+  border: 2px solid #fef08a;
+}
+.dice-btn-green {
+  background: linear-gradient(180deg, #4ade80 0%, #16a34a 50%, #14532d 100%);
+  border: 2px solid #86efac;
+}
+.dice-btn-purple {
+  background: linear-gradient(180deg, #c084fc 0%, #9333ea 50%, #581c87 100%);
+  border: 2px solid #e9d5ff;
+}
+
+/* Audio Recorder Golden Bezel Pod (Matching Mockup) */
+.rec-pod-outer {
+  background: linear-gradient(180deg, #fef3c7 0%, #fde68a 50%, #d97706 100%);
+  border: 3px solid #b45309;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Ornate Corner Filigree Accents */
+.filigree-corner-tl {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+  border-top-left-radius: 6px;
+  pointer-events: none;
+  opacity: 0.65;
+}
+.filigree-corner-br {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  border-bottom-right-radius: 6px;
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(180, 140, 100, 0.4);
+  border-radius: 999px;
+}
+
+/* Force pure white text inside dark spark cards */
+.spark-card-text,
+.spark-card-text * {
+  color: #ffffff !important;
+}

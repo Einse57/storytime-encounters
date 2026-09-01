@@ -23,9 +23,7 @@ export const SessionControls: React.FC<SessionControlsProps> = ({
     const file = e.target.files?.[0];
     if (file) {
       importSession(file);
-      // Reset the input so the same file can be imported again
       e.target.value = '';
-      // Activate session when importing
       onStartSession();
     }
   };
@@ -36,63 +34,53 @@ export const SessionControls: React.FC<SessionControlsProps> = ({
       onClearSession();
     }
   };
-  
-  const handleNew = () => {
-    onStartSession();
-  };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 border-2 border-gray-200">
-      <h3 className="text-lg font-serif font-semibold text-gray-800 mb-3">Session</h3>
-      
-      {!isSessionActive ? (
-        // Before session starts - show only "New" button
+    <div className="bg-white/95 rounded-xl shadow-xs border border-amber-900/10 p-3 sm:p-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div>
-          <button
-            onClick={handleNew}
-            className="w-full bg-green-600 hover:bg-green-700 text-white text-lg font-semibold py-3 px-4 rounded-md transition-colors duration-200 shadow-md"
-            title="Start a new session to track players, encounters, and loot"
-          >
-            🎲 New Session
-          </button>
-          <p className="text-xs text-gray-500 mt-3 text-center">
-            Start a session to unlock player creation, encounter tracking, and loot management
-          </p>
-        </div>
-      ) : (
-        // After session starts - show all controls
-        <div>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={exportSession}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-3 rounded-md transition-colors duration-200"
-              title="Export session to JSON file"
-            >
-              💾 Export
-            </button>
-            
-            <button
-              onClick={handleImport}
-              className="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-3 rounded-md transition-colors duration-200"
-              title="Import session from JSON file"
-            >
-              📂 Import
-            </button>
-            
-            <button
-              onClick={handleClear}
-              className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-3 rounded-md transition-colors duration-200"
-              title="Clear entire session"
-            >
-              🗑️ Clear
-            </button>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs sm:text-sm font-bold text-gray-900 uppercase tracking-wider">
+              Session Backup & Data
+            </h3>
+            {isSessionActive && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Active
+              </span>
+            )}
           </div>
-          
-          <p className="text-xs text-gray-500 mt-2 text-center">
-            Auto-saves to browser
+          <p className="text-[11px] text-gray-500 mt-0.5">
+            Auto-saves locally to your browser. You can export or import JSON stories anytime.
           </p>
         </div>
-      )}
+
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <button
+            onClick={exportSession}
+            className="btn-tactile flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-xs transition-colors cursor-pointer"
+            title="Export session to JSON file"
+          >
+            Export
+          </button>
+          
+          <button
+            onClick={handleImport}
+            className="btn-tactile flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-xs transition-colors cursor-pointer"
+            title="Import session from JSON file"
+          >
+            Import
+          </button>
+          
+          <button
+            onClick={handleClear}
+            className="btn-tactile text-xs text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 py-1.5 px-2.5 rounded-lg border border-rose-200 transition-colors cursor-pointer"
+            title="Clear entire session"
+          >
+            Reset All
+          </button>
+        </div>
+      </div>
 
       <input
         ref={fileInputRef}
