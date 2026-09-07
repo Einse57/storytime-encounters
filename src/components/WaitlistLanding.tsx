@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'ste-waitlist-joined';
 
