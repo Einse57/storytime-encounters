@@ -1,9 +1,21 @@
+import { checkAiRateLimit, getClientIp, ILLUSTRATE_LIMITS } from '../lib/aiRateLimit.js';
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const limit = checkAiRateLimit(`illustrate:${getClientIp(req)}`, ILLUSTRATE_LIMITS);
+  if (!limit.ok) {
+    res.setHeader('Retry-After', String(limit.retryAfterSec));
+    return res.status(429).json({
+      error: limit.error,
+      code: limit.code,
+      retryAfterSec: limit.retryAfterSec,
+    });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
