@@ -13,6 +13,7 @@ export const ComicStudio: React.FC = () => {
     viewMode,
     currentPageIndex,
     isGeneratingStory,
+    generationError,
     setStyle,
     setViewMode,
     setCurrentPageIndex,
@@ -82,6 +83,17 @@ export const ComicStudio: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {generationError && (
+        <p
+          className={`text-[11px] font-serif px-1 leading-snug ${
+            isScifi ? 'text-cyan-200/90' : 'text-amber-950/80'
+          }`}
+          role="status"
+        >
+          {generationError}
+        </p>
+      )}
 
       {/* Main Preview Container */}
       {panels.length === 0 ? (

@@ -11,6 +11,7 @@ export const AudioStudio: React.FC = () => {
     transcript,
     liveInterimText,
     isTranscribingWithGemini,
+    geminiError,
     waveformBars,
     startRecording,
     pauseRecording,
@@ -209,6 +210,17 @@ export const AudioStudio: React.FC = () => {
             >
               <span>{isTranscribingWithGemini ? 'Transcribing...' : 'AI Enhance Transcript'}</span>
             </button>
+          )}
+
+          {geminiError && (
+            <p
+              className={`mt-1 text-[11px] font-serif leading-snug ${
+                isScifi ? 'text-cyan-200/90' : 'text-amber-950/80'
+              }`}
+              role="status"
+            >
+              {geminiError}
+            </p>
           )}
         </div>
       )}
