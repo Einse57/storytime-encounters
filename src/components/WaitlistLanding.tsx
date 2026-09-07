@@ -106,21 +106,6 @@ export function WaitlistLanding() {
           </div>
         </section>
 
-        {/* Parent-operated trust */}
-        <section
-          className="rounded-2xl border border-[#d9c49e] bg-[#faf6ec]/90 px-4 py-4 shadow-sm space-y-2"
-          aria-label="Built for parents"
-        >
-          <h3 className="text-sm font-serif font-black uppercase tracking-wider text-[#451a03]">
-            Parent-operated by design
-          </h3>
-          <ul className="text-sm text-amber-950/80 space-y-1.5 list-disc pl-4 leading-relaxed">
-            <li>You hold the device — kids join the story, not an account maze.</li>
-            <li>No social feed, no stranger chat, no ads in the free companion.</li>
-            <li>Session notes stay on your device unless you choose to share them.</li>
-          </ul>
-        </section>
-
         {/* Founding Family tease (no Stripe / no pricing) */}
         <section
           className="rounded-2xl border border-amber-800/15 bg-gradient-to-br from-[#fff8e8] to-[#f2ead9] px-4 py-4 shadow-sm space-y-2"
