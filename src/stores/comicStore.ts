@@ -100,11 +100,6 @@ export const useComicStore = create<ComicStore>((set, get) => ({
 
   generateImageForPanel: async (panelId: string) => {
     const { panels } = get();
-    const apiKey = useAudioStore.getState().geminiApiKey;
-    if (!apiKey) {
-      set({ generationError: 'Please enter a Gemini API Key in the Audio Studio or settings to generate AI images.' });
-      return;
-    }
 
     const targetPanel = panels.find((p) => p.id === panelId);
     if (!targetPanel) return;
@@ -114,10 +109,13 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     set({ generationError: null });
 
     try {
-      const imageUrl = await generateImageWithGemini(targetPanel.visualPrompt, apiKey);
+      const imageUrl = await generateImageWithGemini(targetPanel.visualPrompt);
       get().updatePanel(panelId, { imageUrl, isGenerating: false });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Image generation failed';
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'Hosted AI illustration failed. Try Copy Prompt instead.';
       get().updatePanel(panelId, { isGenerating: false });
       set({ generationError: msg });
     }
@@ -125,22 +123,23 @@ export const useComicStore = create<ComicStore>((set, get) => ({
 
   generateAllImages: async () => {
     const { panels } = get();
-    const apiKey = useAudioStore.getState().geminiApiKey;
-    if (!apiKey) {
-      set({ generationError: 'Please enter a Gemini API Key to generate AI images directly.' });
-      return;
-    }
 
     set({ isGeneratingImages: true, generationError: null });
 
     for (const panel of panels) {
       try {
         get().updatePanel(panel.id, { isGenerating: true });
-        const imageUrl = await generateImageWithGemini(panel.visualPrompt, apiKey);
+        const imageUrl = await generateImageWithGemini(panel.visualPrompt);
         get().updatePanel(panel.id, { imageUrl, isGenerating: false });
       } catch (err: unknown) {
         console.warn(`Panel ${panel.panelNumber} failed:`, err);
         get().updatePanel(panel.id, { isGenerating: false });
+        set({
+          generationError:
+            err instanceof Error
+              ? err.message
+              : 'Hosted AI illustration failed. Try Copy Prompt instead.',
+        });
       }
     }
 

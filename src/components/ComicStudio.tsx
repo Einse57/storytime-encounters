@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useComicStore } from '../stores/comicStore';
-import { useAudioStore } from '../stores/audioStore';
 import { STYLE_PRESETS, buildMasterGeminiPrompt } from '../utils/promptEngine';
 import type { ComicStyle } from '../types/comic';
 import comicSceneDefaultImg from '../assets/comic_scene_default.webp';
@@ -21,7 +20,6 @@ export const ComicStudio: React.FC = () => {
     generateImageForPanel,
   } = useComicStore();
 
-  const { geminiApiKey } = useAudioStore();
   const currentPackId = useStoryStore((s) => s.currentPackId);
   const isScifi = currentPackId === 'scifi-frontier';
   const [copiedPrompt, setCopiedPrompt] = useState(false);
@@ -138,17 +136,15 @@ export const ComicStudio: React.FC = () => {
                     alt="Comic Scene Adventure"
                     className="w-full h-full object-cover"
                   />
-                  
-                  {geminiApiKey && (
-                    <div className="absolute bottom-2 right-2">
-                      <button
-                        onClick={() => generateImageForPanel(panels[currentPageIndex].id)}
-                        className="btn-tactile bg-gray-950/80 hover:bg-purple-700 text-white text-[10px] font-bold py-1 px-2.5 rounded-md shadow-sm backdrop-blur-xs cursor-pointer"
-                      >
-                        AI Paint
-                      </button>
-                    </div>
-                  )}
+
+                  <div className="absolute bottom-2 right-2">
+                    <button
+                      onClick={() => generateImageForPanel(panels[currentPageIndex].id)}
+                      className="btn-tactile bg-gray-950/80 hover:bg-purple-700 text-white text-[10px] font-bold py-1 px-2.5 rounded-md shadow-sm backdrop-blur-xs cursor-pointer"
+                    >
+                      AI Paint
+                    </button>
+                  </div>
                 </div>
               )}
 

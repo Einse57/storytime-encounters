@@ -10,7 +10,6 @@ export const AudioStudio: React.FC = () => {
     audioBlobUrl,
     transcript,
     liveInterimText,
-    geminiApiKey,
     isTranscribingWithGemini,
     waveformBars,
     startRecording,
@@ -19,7 +18,6 @@ export const AudioStudio: React.FC = () => {
     stopRecording,
     transcribeWithGemini,
     setTranscript,
-    setGeminiApiKey,
     clearAudioSession,
   } = useAudioRecorder();
 
@@ -27,8 +25,6 @@ export const AudioStudio: React.FC = () => {
   const isScifi = currentPackId === 'scifi-frontier';
 
   const [showStoryLog, setShowStoryLog] = useState(true);
-  const [isApiKeyOpen, setIsApiKeyOpen] = useState(false);
-  const [apiKeyInput, setApiKeyInput] = useState(geminiApiKey);
 
   const formatTimer = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -55,59 +51,7 @@ export const AudioStudio: React.FC = () => {
         }`}>
           Audio Recorder
         </h3>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsApiKeyOpen(!isApiKeyOpen)}
-            className={`text-[11px] font-bold underline cursor-pointer ${
-              isScifi ? 'text-cyan-400 hover:text-cyan-200' : 'text-amber-900 hover:text-amber-700'
-            }`}
-          >
-            {geminiApiKey ? 'Key Active' : 'API Key'}
-          </button>
-        </div>
       </div>
-
-      {/* API Key Modal Drawer */}
-      {isApiKeyOpen && (
-        <div className={`rounded-xl p-3 space-y-2 text-xs border ${
-          isScifi ? 'bg-[#1e293b] border-slate-700 text-slate-100' : 'bg-[#fcf7ec] border-[#d9c49e] text-amber-950'
-        }`}>
-          <div className="flex justify-between items-center">
-            <span className={`font-bold ${isScifi ? 'text-cyan-300' : 'text-amber-950'}`}>
-              Google Gemini API Key
-            </span>
-            <span className={`text-[10px] ${isScifi ? 'text-slate-400' : 'text-gray-500'}`}>
-              For AI speech & images
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="password"
-              value={apiKeyInput}
-              onChange={(e) => setApiKeyInput(e.target.value)}
-              placeholder="AIzaSy..."
-              className={`flex-1 px-2.5 py-1.5 border rounded-lg text-xs ${
-                isScifi
-                  ? 'bg-[#0f172a] border-slate-600 text-white placeholder-slate-500 focus:ring-cyan-500'
-                  : 'bg-white border-amber-300 text-gray-900 focus:ring-amber-500'
-              }`}
-            />
-            <button
-              onClick={() => {
-                setGeminiApiKey(apiKeyInput);
-                setIsApiKeyOpen(false);
-              }}
-              className={`font-bold px-3 py-1.5 rounded-lg cursor-pointer ${
-                isScifi
-                  ? 'bg-cyan-600 hover:bg-cyan-500 text-white'
-                  : 'bg-amber-800 hover:bg-amber-900 text-white'
-              }`}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Capsule Pod */}
       <div className={`rounded-xl p-2 shadow-xs flex items-center justify-between gap-2.5 relative overflow-hidden border-2 ${
@@ -253,7 +197,7 @@ export const AudioStudio: React.FC = () => {
             </div>
           )}
 
-          {audioBlob && geminiApiKey && (
+          {audioBlob && (
             <button
               onClick={transcribeWithGemini}
               disabled={isTranscribingWithGemini}
@@ -263,7 +207,7 @@ export const AudioStudio: React.FC = () => {
                   : 'text-purple-800 bg-purple-100 hover:bg-purple-200 border-purple-300'
               }`}
             >
-              <span>{isTranscribingWithGemini ? 'Transcribing...' : 'AI Enhance Transcript (Gemini)'}</span>
+              <span>{isTranscribingWithGemini ? 'Transcribing...' : 'AI Enhance Transcript'}</span>
             </button>
           )}
         </div>
