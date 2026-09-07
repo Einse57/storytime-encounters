@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import type { RecordingState } from '../types/audio';
 
-const API_KEY_STORAGE = 'storytime-gemini-api-key';
 const TRANSCRIPT_STORAGE = 'storytime-session-transcript';
 
 interface AudioStore {
@@ -13,7 +12,6 @@ interface AudioStore {
   transcript: string;
   liveInterimText: string;
   isLiveTranscriptionEnabled: boolean;
-  geminiApiKey: string;
   isTranscribingWithGemini: boolean;
   geminiError: string | null;
 
@@ -25,7 +23,6 @@ interface AudioStore {
   appendTranscript: (text: string) => void;
   setLiveInterimText: (text: string) => void;
   toggleLiveTranscription: () => void;
-  setGeminiApiKey: (key: string) => void;
   setIsTranscribingWithGemini: (isTranscribing: boolean) => void;
   setGeminiError: (error: string | null) => void;
   clearAudioSession: () => void;
@@ -40,7 +37,6 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
   transcript: localStorage.getItem(TRANSCRIPT_STORAGE) || '',
   liveInterimText: '',
   isLiveTranscriptionEnabled: true,
-  geminiApiKey: localStorage.getItem(API_KEY_STORAGE) || '',
   isTranscribingWithGemini: false,
   geminiError: null,
 
@@ -75,12 +71,6 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
 
   toggleLiveTranscription: () =>
     set((state) => ({ isLiveTranscriptionEnabled: !state.isLiveTranscriptionEnabled })),
-
-  setGeminiApiKey: (key) => {
-    const cleanKey = key.trim();
-    localStorage.setItem(API_KEY_STORAGE, cleanKey);
-    set({ geminiApiKey: cleanKey, geminiError: null });
-  },
 
   setIsTranscribingWithGemini: (isTranscribingWithGemini) =>
     set({ isTranscribingWithGemini }),

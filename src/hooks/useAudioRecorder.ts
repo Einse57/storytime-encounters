@@ -11,7 +11,6 @@ export const useAudioRecorder = () => {
     transcript,
     liveInterimText,
     isLiveTranscriptionEnabled,
-    geminiApiKey,
     isTranscribingWithGemini,
     geminiError,
     setRecordingState,
@@ -20,7 +19,6 @@ export const useAudioRecorder = () => {
     setTranscript,
     appendTranscript,
     setLiveInterimText,
-    setGeminiApiKey,
     setIsTranscribingWithGemini,
     setGeminiError,
     clearAudioSession,
@@ -294,14 +292,10 @@ export const useAudioRecorder = () => {
     setAudioBlob(file, url, file.type || 'audio/webm');
   };
 
-  // Transcribe with Gemini 2.0 Flash
+  // Transcribe via hosted /api/transcribe serverless proxy
   const transcribeWithGemini = async () => {
     if (!audioBlob) {
       setGeminiError('Please record audio or upload an audio file first.');
-      return;
-    }
-    if (!geminiApiKey.trim()) {
-      setGeminiError('Please provide a Google Gemini API key to use AI audio transcription.');
       return;
     }
 
@@ -321,55 +315,33 @@ export const useAudioRecorder = () => {
         reader.readAsDataURL(audioBlob);
       });
 
-      const base64Audio = await base64Promise;
+      const audioBase64 = await base64Promise;
       const mimeType = audioBlob.type || 'audio/webm';
 
-      const prompt = `You are an expert transcriber for tabletop roleplaying and storytelling sessions with kids.
-Transcribe this audio recording accurately.
-Format the output as a clean, engaging story narrative:
-- Include dialogue with character names if discernable.
-- Capture the imaginative events, actions, and excitement.
-- Keep the tone friendly, adventurous, and fun.
-Output only the transcribed story text.`;
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audioBase64,
+          mimeType: mimeType.includes(';') ? mimeType.split(';')[0] : mimeType,
+        }),
+      });
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { text: prompt },
-                  {
-                    inline_data: {
-                      mime_type: mimeType.includes(';') ? mimeType.split(';')[0] : mimeType,
-                      data: base64Audio,
-                    },
-                  },
-                ],
-              },
-            ],
-          }),
-        }
-      );
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData?.error?.message || `API Error: ${response.status} ${response.statusText}`);
+        throw new Error(data?.error || `Transcription failed: ${response.status}`);
       }
 
-      const data = await response.json();
-      const transcribedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const transcribedText = data?.transcript || data?.text;
 
       if (transcribedText) {
-        setTranscript(transcribedText.trim());
+        setTranscript(String(transcribedText).trim());
       } else {
-        throw new Error('No transcription returned by Gemini.');
+        throw new Error(data?.error || 'Hosted AI returned no transcription. Try again later.');
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Transcription failed.';
+      const msg = err instanceof Error ? err.message : 'Hosted AI transcription failed.';
       console.error('Gemini transcription error:', err);
       setGeminiError(msg);
     } finally {
@@ -403,7 +375,6 @@ Output only the transcribed story text.`;
     transcript,
     liveInterimText,
     isLiveTranscriptionEnabled,
-    geminiApiKey,
     isTranscribingWithGemini,
     geminiError,
     audioLevel,
@@ -416,7 +387,6 @@ Output only the transcribed story text.`;
     handleFileUpload,
     transcribeWithGemini,
     setTranscript,
-    setGeminiApiKey,
     clearAudioSession,
   };
 };

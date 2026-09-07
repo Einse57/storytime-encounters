@@ -189,63 +189,24 @@ export const buildMasterGeminiPrompt = (
 };
 
 /**
- * Generate an image using Google Gemini / Imagen 3 API if API key is provided
+ * Generate an image via the hosted /api/illustrate serverless proxy
  */
-export const generateImageWithGemini = async (
-  prompt: string,
-  apiKey: string
-): Promise<string> => {
-  if (!apiKey.trim()) {
-    throw new Error('No Gemini API key provided.');
-  }
-
-  // Try Imagen 3 first
-  try {
-    const imagenEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-    const response = await fetch(imagenEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        instances: [{ prompt }],
-        parameters: {
-          sampleCount: 1,
-          aspectRatio: '1:1',
-          outputOptions: { mimeType: 'image/jpeg' },
-        },
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
-      if (b64) {
-        return `data:image/jpeg;base64,${b64}`;
-      }
-    }
-  } catch {
-    // Fall back to generateContent if predict is not enabled for this key
-  }
-
-  // Fallback: Gemini 2.0 Flash generateContent with image output
-  const flashEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-  const response = await fetch(flashEndpoint, {
+export const generateImageWithGemini = async (prompt: string): Promise<string> => {
+  const response = await fetch('/api/illustrate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: `Generate an image for: ${prompt}` }] }],
-    }),
+    body: JSON.stringify({ prompt }),
   });
 
+  const data = await response.json().catch(() => ({}));
+
   if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `Gemini API error: ${response.status}`);
+    throw new Error(data?.error || `Illustration failed: ${response.status}`);
   }
 
-  const data = await response.json();
-  const inlineData = data?.candidates?.[0]?.content?.parts?.[0]?.inline_data;
-  if (inlineData?.data) {
-    return `data:${inlineData.mime_type || 'image/png'};base64,${inlineData.data}`;
+  if (!data?.imageUrl) {
+    throw new Error(data?.error || 'Illustration completed, but no image URL was returned.');
   }
 
-  throw new Error('Image generation completed, but no direct image stream was returned.');
+  return data.imageUrl;
 };
