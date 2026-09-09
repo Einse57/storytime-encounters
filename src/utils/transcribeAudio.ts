@@ -54,7 +54,7 @@ function encodeSlice(decoded: AudioBuffer, startSec: number, durationSec: number
     try {
       rec = new MediaRecorder(stream.stream, { mimeType: mime, audioBitsPerSecond: 20000 });
     } catch {
-      rec = new MediaRecorder(dest.stream as unknown as MediaStream);
+      rec = new MediaRecorder(stream.stream);
     }
 
     const parts: Blob[] = [];
