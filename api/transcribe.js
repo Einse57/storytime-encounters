@@ -30,10 +30,26 @@ export default async function handler(req, res) {
   const rawMime =
     typeof req.body?.mimeType === 'string' ? req.body.mimeType.trim() : 'audio/webm';
   const mimeType = rawMime.includes(';') ? rawMime.split(';')[0] : rawMime;
+  const part = Number(req.body?.part) || 1;
+  const partCount = Number(req.body?.partCount) || 1;
 
   if (!audioBase64) {
     return res.status(400).json({ error: 'audioBase64 is required' });
   }
+
+  // Platform body limit is ~4.5MB. Reject before Gemini if the client skipped shrink.
+  if (audioBase64.length > 3_400_000) {
+    return res.status(413).json({
+      error:
+        'This recording is too long for one upload. Try a shorter take, or edit the Story Log by hand.',
+      code: 'PAYLOAD_TOO_LARGE',
+    });
+  }
+
+  const partNote =
+    partCount > 1
+      ? `This is part ${part} of ${partCount} of one continuous storytelling session. Transcribe only this part. Do not summarize other parts.`
+      : '';
 
   const prompt = `You are an expert transcriber for tabletop roleplaying and storytelling sessions with kids.
 Transcribe this audio recording accurately.
@@ -41,7 +57,8 @@ Format the output as a clean, engaging story narrative:
 - Include dialogue with character names if discernable.
 - Capture the imaginative events, actions, and excitement.
 - Keep the tone friendly, adventurous, and fun.
-Output only the transcribed story text.`;
+Output only the transcribed story text.
+${partNote}`;
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
