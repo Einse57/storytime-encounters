@@ -26,6 +26,12 @@ function isCompanionPath(pathname: string) {
   return pathname === '/app' || pathname.startsWith('/app/');
 }
 
+function sectionLabelClass(isScifi: boolean) {
+  return `text-[10px] sm:text-[11px] font-serif font-black uppercase tracking-[0.14em] px-1 ${
+    isScifi ? 'text-cyan-300/80' : 'text-amber-950/55'
+  }`;
+}
+
 function CompanionApp() {
   // Silent session persistence (auto-saves to localStorage in the background)
   useSessionPersistence();
@@ -104,11 +110,25 @@ function CompanionApp() {
 
       {/* Main Storytelling Cockpit */}
       <main className="max-w-lg mx-auto px-3 space-y-3 pt-0.5">
-        <section aria-label="Story Seed">
+        <section aria-labelledby="story-setup-heading" className="space-y-1.5">
+          <h2 id="story-setup-heading" className={sectionLabelClass(isScifi)}>
+            Story setup
+          </h2>
           <StorySeedGenerator />
         </section>
 
-        <section aria-label="Story Sparks">
+        <div
+          role="separator"
+          aria-hidden="true"
+          className={`border-t mx-1 ${
+            isScifi ? 'border-slate-700/80' : 'border-amber-900/15'
+          }`}
+        />
+
+        <section aria-labelledby="story-support-heading" className="space-y-1.5">
+          <h2 id="story-support-heading" className={sectionLabelClass(isScifi)}>
+            Story support
+          </h2>
           <StorySparks />
         </section>
 
