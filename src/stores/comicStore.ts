@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { ComicStyle, StoryPanel } from '../types/comic';
-import { parseSessionIntoPanels, generateImageWithGemini, STYLE_PRESETS } from '../utils/promptEngine';
+import { generateImageWithGemini, STYLE_PRESETS } from '../utils/promptEngine';
+import { buildScenesFromSession } from '../utils/rebuildScenes';
 import { useStoryStore } from './storyStore';
 import { useAudioStore } from './audioStore';
 
@@ -15,7 +16,6 @@ interface ComicStore {
   isGeneratingImages: boolean;
   generationError: string | null;
 
-  // Actions
   setStyle: (style: ComicStyle) => void;
   setViewMode: (mode: 'comic_grid' | 'storybook_page') => void;
   setCurrentPageIndex: (index: number) => void;
@@ -46,7 +46,6 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     const { panels } = get();
     const preset = STYLE_PRESETS[selectedStyle];
 
-    // Update existing panel prompts with new style
     const updatedPanels = panels.map((p) => ({
       ...p,
       visualPrompt: p.visualPrompt.replace(
@@ -70,7 +69,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
       const audioState = useAudioStore.getState();
       const { selectedStyle } = get();
 
-      const newPanels = parseSessionIntoPanels(
+      const { panels: newPanels, note } = buildScenesFromSession(
         audioState.transcript,
         storyState.seed,
         storyState.activeLoot,
@@ -84,6 +83,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
         panels: newPanels,
         currentPageIndex: 0,
         isGeneratingStory: false,
+        generationError: note,
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to generate scenes';
@@ -104,7 +104,6 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     const targetPanel = panels.find((p) => p.id === panelId);
     if (!targetPanel) return;
 
-    // Set panel to generating
     get().updatePanel(panelId, { isGenerating: true });
     set({ generationError: null });
 
