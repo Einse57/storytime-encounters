@@ -80,10 +80,6 @@ function encodeSlice(decoded: AudioBuffer, startSec: number, durationSec: number
   });
 }
 
-/**
- * Shrink a long kid-session recording so /api/transcribe stays under the
- * platform body limit. Returns one or more opus/webm parts.
- */
 export async function prepareAudioParts(blob: Blob): Promise<Blob[]> {
   if (blob.size <= MAX_UPLOAD_BYTES) return [blob];
 
@@ -115,4 +111,49 @@ export async function prepareAudioParts(blob: Blob): Promise<Blob[]> {
     throw new Error('Could not prepare this recording for Enhance.');
   }
   return parts;
+}
+
+async function transcribePart(part: Blob, index: number, partCount: number): Promise<string> {
+  const audioBase64 = await blobToBase64(part);
+  const mimeType = (part.type || 'audio/webm').split(';')[0];
+  const response = await fetch('/api/transcribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      audioBase64,
+      mimeType,
+      part: index + 1,
+      partCount,
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 413) {
+    throw new Error(
+      data?.error ||
+        'This recording is too long to upload. Try a shorter take, or edit the Story Log by hand.',
+    );
+  }
+  if (!response.ok) {
+    throw new Error(data?.error || `Transcription failed: ${response.status}`);
+  }
+  const text = data?.transcript || data?.text;
+  if (!text) {
+    throw new Error(data?.error || 'Hosted AI returned no transcription. Try again later.');
+  }
+  return String(text).trim();
+}
+
+/** Compress if needed, then transcribe in parts small enough for Vercel. */
+export async function enhanceRecording(blob: Blob): Promise<string> {
+  const parts = await prepareAudioParts(blob);
+  const transcripts: string[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    transcripts.push(await transcribePart(parts[i], i, parts.length));
+  }
+  const joined = transcripts.filter(Boolean).join('\n\n');
+  if (!joined) {
+    throw new Error('Hosted AI returned no transcription. Try again later.');
+  }
+  return joined;
 }
