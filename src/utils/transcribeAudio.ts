@@ -3,6 +3,9 @@ export const MAX_UPLOAD_BYTES = 2_500_000;
 export const MAX_PARTS = 8;
 const SLICE_SEC = 240;
 
+const TOO_LONG =
+  'This recording is too long to upload as-is. Try a shorter take (about 20–30 minutes), or keep editing the Story Log by hand.';
+
 export async function blobToBase64(blob: Blob): Promise<string> {
   const dataUrl = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -14,49 +17,44 @@ export async function blobToBase64(blob: Blob): Promise<string> {
   return comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
 }
 
-function mixdownSlice(
-  decoded: AudioBuffer,
-  startSec: number,
-  durationSec: number,
-  ctx: AudioContext,
-): AudioBuffer {
-  const rate = decoded.sampleRate;
-  const start = Math.min(decoded.length, Math.floor(startSec * rate));
-  const end = Math.min(decoded.length, Math.floor((startSec + durationSec) * rate));
-  const length = Math.max(1, end - start);
-  const out = ctx.createBuffer(1, length, rate);
-  const dest = out.getChannelData(0);
-  const channels = decoded.numberOfChannels;
-  for (let i = 0; i < length; i++) {
-    let sum = 0;
-    for (let c = 0; c < channels; c++) {
-      sum += decoded.getChannelData(c)[start + i] || 0;
-    }
-    dest[i] = sum / channels;
-  }
-  return out;
+function audioContext(): AudioContext {
+  const Ctx =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+  return new Ctx();
 }
 
-function encodeSlice(slice: AudioBuffer): Promise<Blob> {
+function encodeSlice(decoded: AudioBuffer, startSec: number, durationSec: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
-    const Ctx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new Ctx();
-    const dest = ctx.createMediaStreamDestination();
-    const src = ctx.createBufferSource();
-    const playable = mixdownSlice(slice, 0, slice.duration, ctx);
-    src.buffer = playable;
-    src.connect(dest);
+    const ctx = audioContext();
+    const rate = decoded.sampleRate;
+    const start = Math.min(decoded.length, Math.floor(startSec * rate));
+    const end = Math.min(decoded.length, Math.floor((startSec + durationSec) * rate));
+    const length = Math.max(1, end - start);
+    const slice = ctx.createBuffer(1, length, rate);
+    const dest = slice.getChannelData(0);
+    const channels = decoded.numberOfChannels;
+    for (let i = 0; i < length; i++) {
+      let sum = 0;
+      for (let c = 0; c < channels; c++) {
+        sum += decoded.getChannelData(c)[start + i] || 0;
+      }
+      dest[i] = sum / channels;
+    }
+
+    const node = ctx.createBufferSource();
+    const stream = ctx.createMediaStreamDestination();
+    node.buffer = slice;
+    node.connect(stream);
 
     const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
       ? 'audio/webm;codecs=opus'
       : 'audio/webm';
     let rec: MediaRecorder;
     try {
-      rec = new MediaRecorder(dest.stream, { mimeType: mime, audioBitsPerSecond: 20000 });
+      rec = new MediaRecorder(stream.stream, { mimeType: mime, audioBitsPerSecond: 20000 });
     } catch {
-      rec = new MediaRecorder(dest.stream);
+      rec = new MediaRecorder(dest.stream as unknown as MediaStream);
     }
 
     const parts: Blob[] = [];
@@ -73,17 +71,14 @@ function encodeSlice(slice: AudioBuffer): Promise<Blob> {
     };
 
     rec.start();
-    src.onended = () => {
+    node.onended = () => {
       window.setTimeout(() => {
         if (rec.state !== 'inactive') rec.stop();
       }, 200);
     };
-    src.start();
+    node.start();
   });
 }
-
-const TOO_LONG =
-  'This recording is too long to upload as-is. Try a shorter take (about 20–30 minutes), or keep editing the Story Log by hand.';
 
 /**
  * Shrink a long kid-session recording so /api/transcribe stays under the
@@ -92,7 +87,7 @@ const TOO_LONG =
 export async function prepareAudioParts(blob: Blob): Promise<Blob[]> {
   if (blob.size <= MAX_UPLOAD_BYTES) return [blob];
 
-  const ctx = new AudioContext();
+  const ctx = audioContext();
   let decoded: AudioBuffer;
   try {
     decoded = await ctx.decodeAudioData(await blob.arrayBuffer());
@@ -109,18 +104,7 @@ export async function prepareAudioParts(blob: Blob): Promise<Blob[]> {
 
   const parts: Blob[] = [];
   for (let start = 0; start < total; start += SLICE_SEC) {
-    const slice = mixdownSlice(decoded, start, Math.min(SLICE_SEC, total - start), new AudioContext());
-    // mixdownSlice already created a buffer on a throwaway context — encode from decoded instead
-    const encoded = await encodeSlice(
-      (() => {
-        const Ctx =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        const tmp = new Ctx();
-        const buf = mixdownSlice(decoded, start, Math.min(SLICE_SEC, total - start), tmp);
-        return buf;
-      })(),
-    );
+    const encoded = await encodeSlice(decoded, start, Math.min(SLICE_SEC, total - start));
     if (encoded.size > MAX_UPLOAD_BYTES) {
       throw new Error(TOO_LONG);
     }
