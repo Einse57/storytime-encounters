@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { ComicStyle, StoryPanel } from '../types/comic';
-import { generateImageWithGemini, STYLE_PRESETS } from '../utils/promptEngine';
+import { generateImageWithGemini } from '../utils/promptEngine';
+import { getStylePreset, inferArtSetting, isStyleAllowed } from '../utils/artStyles';
 import { buildScenesFromSession } from '../utils/rebuildScenes';
 import { useStoryStore } from './storyStore';
 import { useAudioStore } from './audioStore';
@@ -30,8 +31,18 @@ function persistPanels(panels: StoryPanel[]) {
   localStorage.setItem(COMIC_STORAGE, JSON.stringify(panels));
 }
 
+function currentArtSetting() {
+  const story = useStoryStore.getState();
+  const audio = useAudioStore.getState();
+  return inferArtSetting({
+    packId: story.currentPackId,
+    setting: [story.seed.setting, story.seed.conflict, story.seed.hook].filter(Boolean).join(' '),
+    transcript: audio.transcript,
+  });
+}
+
 function promptForStyle(panel: StoryPanel, style: ComicStyle): string {
-  const preset = STYLE_PRESETS[style];
+  const preset = getStylePreset(style);
   const moment = (panel.caption || panel.title || 'the current story moment').slice(0, 420);
   return `${preset.promptPrefix} Depict only this story moment, clearly in this visual style and not a previous painting: ${moment} ${preset.promptSuffix}`;
 }
@@ -54,9 +65,10 @@ export const useComicStore = create<ComicStore>((set, get) => ({
 
   setStyle: (selectedStyle: ComicStyle) => {
     if (selectedStyle === get().selectedStyle) return;
+    if (!isStyleAllowed(selectedStyle, currentArtSetting())) return;
 
     const { panels, currentPageIndex } = get();
-    const preset = STYLE_PRESETS[selectedStyle];
+    const preset = getStylePreset(selectedStyle);
     const updatedPanels = panels.map((p) => ({
       ...p,
       imageUrl: undefined,

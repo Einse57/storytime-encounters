@@ -1,7 +1,8 @@
 import type { ComicStyle, StoryPanel } from '../types/comic';
 import type { StorySeedState } from '../stores/storyStore';
 import type { StorySparkLoot, StorySparkCreature, StorySparkTwist } from '../types/storyPack';
-import { STYLE_PRESETS, parseSessionIntoPanels } from './promptEngine';
+import { parseSessionIntoPanels } from './promptEngine';
+import { getStylePreset } from './artStyles';
 
 function chunkTranscript(text: string, maxPanels = 5): string[] {
   const sentences = text
@@ -21,8 +22,8 @@ function chunkTranscript(text: string, maxPanels = 5): string[] {
 
 function quoteFrom(text: string): string {
   const cleaned = text.replace(/\s+/g, ' ').trim();
-  const slice = cleaned.slice(0, 90).replace(/["“”]/g, '');
-  return `“${slice}${cleaned.length > 90 ? '…' : ''}”`;
+  const slice = cleaned.slice(0, 90).replace(/["\u201c\u201d]/g, '');
+  return `\u201c${slice}${cleaned.length > 90 ? '\u2026' : ''}\u201d`;
 }
 
 /**
@@ -37,7 +38,7 @@ export function buildScenesFromSession(
   twist: StorySparkTwist | null,
   style: ComicStyle,
 ): { panels: StoryPanel[]; note: string } {
-  const preset = STYLE_PRESETS[style];
+  const preset = getStylePreset(style);
   const chunks = chunkTranscript(transcript.trim());
 
   if (chunks.length === 0) {
@@ -72,6 +73,6 @@ export function buildScenesFromSession(
 
   return {
     panels,
-    note: `Rebuilt ${panels.length} scenes from the story log. Paintings cleared — tap AI Paint to match the new scenes.`,
+    note: `Rebuilt ${panels.length} scenes from the story log. Paintings cleared \u2014 tap AI Paint to match the new scenes.`,
   };
 }
