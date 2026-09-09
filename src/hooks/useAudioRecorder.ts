@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useAudioStore } from '../stores/audioStore';
 import type { ISpeechRecognition, SpeechRecognitionEvent, SpeechRecognitionErrorEvent } from '../types/audio';
+import { enhanceRecording } from '../utils/transcribeAudio';
 
 export const useAudioRecorder = () => {
   const {
@@ -28,7 +29,6 @@ export const useAudioRecorder = () => {
   const [waveformBars, setWaveformBars] = useState<number[]>(new Array(16).fill(5));
   const [isSpeechSupported, setIsSpeechSupported] = useState<boolean>(false);
 
-  // Native refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -39,13 +39,11 @@ export const useAudioRecorder = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Check speech recognition support on mount
   useEffect(() => {
     const SpeechClass = window.SpeechRecognition || window.webkitSpeechRecognition;
     setIsSpeechSupported(Boolean(SpeechClass));
   }, []);
 
-  // Audio level visualizer loop
   const updateAudioLevels = useCallback(() => {
     if (!analyserRef.current || recordingState !== 'recording') {
       setAudioLevel(0);
@@ -56,7 +54,6 @@ export const useAudioRecorder = () => {
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
     analyserRef.current.getByteFrequencyData(dataArray);
 
-    // Calculate average volume
     let sum = 0;
     for (let i = 0; i < dataArray.length; i++) {
       sum += dataArray[i];
@@ -65,7 +62,6 @@ export const useAudioRecorder = () => {
     const normalized = Math.min(100, Math.round((avg / 128) * 100));
     setAudioLevel(normalized);
 
-    // Extract 16 frequency bands for visual waveform
     const step = Math.floor(dataArray.length / 16);
     const bars: number[] = [];
     for (let i = 0; i < 16; i++) {
@@ -78,7 +74,6 @@ export const useAudioRecorder = () => {
     animationFrameRef.current = requestAnimationFrame(updateAudioLevels);
   }, [recordingState]);
 
-  // Handle Speech Recognition setup
   const initSpeechRecognition = useCallback(() => {
     const SpeechClass = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechClass || !isLiveTranscriptionEnabled) return;
@@ -116,7 +111,6 @@ export const useAudioRecorder = () => {
 
       recognition.onend = () => {
         isSpeechActiveRef.current = false;
-        // Auto-restart if we are still actively recording
         if (useAudioStore.getState().recordingState === 'recording' && isLiveTranscriptionEnabled) {
           try {
             recognition.start();
@@ -132,7 +126,6 @@ export const useAudioRecorder = () => {
     }
   }, [isLiveTranscriptionEnabled, appendTranscript, setLiveInterimText]);
 
-  // Start recording
   const startRecording = async () => {
     try {
       audioChunksRef.current = [];
@@ -145,7 +138,6 @@ export const useAudioRecorder = () => {
       });
       audioStreamRef.current = stream;
 
-      // Audio analysis setup
       const audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 64;
@@ -155,7 +147,6 @@ export const useAudioRecorder = () => {
       audioContextRef.current = audioCtx;
       analyserRef.current = analyser;
 
-      // MediaRecorder setup
       const mimeTypes = [
         'audio/webm;codecs=opus',
         'audio/webm',
@@ -163,7 +154,9 @@ export const useAudioRecorder = () => {
         'audio/ogg;codecs=opus',
       ];
       const selectedMime = mimeTypes.find((m) => MediaRecorder.isTypeSupported(m)) || '';
-      const recorder = new MediaRecorder(stream, selectedMime ? { mimeType: selectedMime } : undefined);
+      const recorderOptions: MediaRecorderOptions = { audioBitsPerSecond: 24000 };
+      if (selectedMime) recorderOptions.mimeType = selectedMime;
+      const recorder = new MediaRecorder(stream, recorderOptions);
 
       recorder.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) {
@@ -178,21 +171,18 @@ export const useAudioRecorder = () => {
         setAudioBlob(blob, url, mime);
       };
 
-      recorder.start(1000); // 1-second chunks
+      recorder.start(1000);
       mediaRecorderRef.current = recorder;
       setRecordingState('recording');
       setRecordingDuration(0);
 
-      // Start duration timer
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = window.setInterval(() => {
         setRecordingDuration(useAudioStore.getState().recordingDuration + 1);
       }, 1000);
 
-      // Start audio level visualizer
       animationFrameRef.current = requestAnimationFrame(updateAudioLevels);
 
-      // Start Speech Recognition
       initSpeechRecognition();
       if (speechRecognitionRef.current && !isSpeechActiveRef.current) {
         try {
@@ -208,7 +198,6 @@ export const useAudioRecorder = () => {
     }
   };
 
-  // Pause recording
   const pauseRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.pause();
@@ -231,7 +220,6 @@ export const useAudioRecorder = () => {
     setRecordingState('paused');
   };
 
-  // Resume recording
   const resumeRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
       mediaRecorderRef.current.resume();
@@ -252,7 +240,6 @@ export const useAudioRecorder = () => {
     setRecordingState('recording');
   };
 
-  // Stop recording
   const stopRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
@@ -286,13 +273,11 @@ export const useAudioRecorder = () => {
     setWaveformBars(new Array(16).fill(5));
   };
 
-  // Handle manual audio file upload
   const handleFileUpload = (file: File) => {
     const url = URL.createObjectURL(file);
     setAudioBlob(file, url, file.type || 'audio/webm');
   };
 
-  // Transcribe via hosted /api/transcribe serverless proxy
   const transcribeWithGemini = async () => {
     if (!audioBlob) {
       setGeminiError('Please record audio or upload an audio file first.');
@@ -303,43 +288,8 @@ export const useAudioRecorder = () => {
     setGeminiError(null);
 
     try {
-      // Convert blob to base64
-      const reader = new FileReader();
-      const base64Promise = new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          const res = reader.result as string;
-          const base64Data = res.split(',')[1];
-          resolve(base64Data);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(audioBlob);
-      });
-
-      const audioBase64 = await base64Promise;
-      const mimeType = audioBlob.type || 'audio/webm';
-
-      const response = await fetch('/api/transcribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          audioBase64,
-          mimeType: mimeType.includes(';') ? mimeType.split(';')[0] : mimeType,
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data?.error || `Transcription failed: ${response.status}`);
-      }
-
-      const transcribedText = data?.transcript || data?.text;
-
-      if (transcribedText) {
-        setTranscript(String(transcribedText).trim());
-      } else {
-        throw new Error(data?.error || 'Hosted AI returned no transcription. Try again later.');
-      }
+      const transcribedText = await enhanceRecording(audioBlob);
+      setTranscript(transcribedText);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Hosted AI transcription failed.';
       console.error('Gemini transcription error:', err);
@@ -349,7 +299,6 @@ export const useAudioRecorder = () => {
     }
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
