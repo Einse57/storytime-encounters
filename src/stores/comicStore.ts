@@ -26,6 +26,16 @@ interface ComicStore {
   clearPanels: () => void;
 }
 
+function persistPanels(panels: StoryPanel[]) {
+  localStorage.setItem(COMIC_STORAGE, JSON.stringify(panels));
+}
+
+function promptForStyle(panel: StoryPanel, style: ComicStyle): string {
+  const preset = STYLE_PRESETS[style];
+  const moment = (panel.caption || panel.title || 'the current story moment').slice(0, 420);
+  return `${preset.promptPrefix} Depict only this story moment, clearly in this visual style and not a previous painting: ${moment} ${preset.promptSuffix}`;
+}
+
 export const useComicStore = create<ComicStore>((set, get) => ({
   selectedStyle: 'comic_book',
   panels: (() => {
@@ -43,18 +53,31 @@ export const useComicStore = create<ComicStore>((set, get) => ({
   generationError: null,
 
   setStyle: (selectedStyle: ComicStyle) => {
-    const { panels } = get();
-    const preset = STYLE_PRESETS[selectedStyle];
+    if (selectedStyle === get().selectedStyle) return;
 
+    const { panels, currentPageIndex } = get();
+    const preset = STYLE_PRESETS[selectedStyle];
     const updatedPanels = panels.map((p) => ({
       ...p,
-      visualPrompt: p.visualPrompt.replace(
-        /A (vibrant comic book panel|whimsical children's picture book illustration|dreamy watercolor fantasy painting|beautiful 16-bit retro fantasy RPG pixel art scene)[^,]*,/,
-        preset.promptPrefix
-      ),
+      imageUrl: undefined,
+      isGenerating: false,
+      visualPrompt: promptForStyle(p, selectedStyle),
     }));
 
-    set({ selectedStyle, panels: updatedPanels });
+    persistPanels(updatedPanels);
+    const current = updatedPanels[currentPageIndex];
+    const styleName = preset.name.split('/')[0].trim();
+    set({
+      selectedStyle,
+      panels: updatedPanels,
+      generationError: current
+        ? `Dropped the old painting. Rendering this scene as ${styleName}…`
+        : null,
+    });
+
+    if (current) {
+      void get().generateImageForPanel(current.id);
+    }
   },
 
   setViewMode: (viewMode) => set({ viewMode }),
@@ -78,7 +101,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
         selectedStyle
       );
 
-      localStorage.setItem(COMIC_STORAGE, JSON.stringify(newPanels));
+      persistPanels(newPanels);
       set({
         panels: newPanels,
         currentPageIndex: 0,
@@ -94,7 +117,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
   updatePanel: (id, updates) => {
     const { panels } = get();
     const updated = panels.map((p) => (p.id === id ? { ...p, ...updates } : p));
-    localStorage.setItem(COMIC_STORAGE, JSON.stringify(updated));
+    persistPanels(updated);
     set({ panels: updated });
   },
 
@@ -104,18 +127,20 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     const targetPanel = panels.find((p) => p.id === panelId);
     if (!targetPanel) return;
 
-    get().updatePanel(panelId, { isGenerating: true });
+    get().updatePanel(panelId, { isGenerating: true, imageUrl: undefined });
     set({ generationError: null });
 
     try {
       const imageUrl = await generateImageWithGemini(targetPanel.visualPrompt);
+      const latest = get().panels.find((p) => p.id === panelId);
+      if (!latest || latest.visualPrompt !== targetPanel.visualPrompt) return;
       get().updatePanel(panelId, { imageUrl, isGenerating: false });
     } catch (err: unknown) {
       const msg =
         err instanceof Error
           ? err.message
           : 'Hosted AI illustration failed. Try Copy Prompt instead.';
-      get().updatePanel(panelId, { isGenerating: false });
+      get().updatePanel(panelId, { isGenerating: false, imageUrl: undefined });
       set({ generationError: msg });
     }
   },
@@ -127,7 +152,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
 
     for (const panel of panels) {
       try {
-        get().updatePanel(panel.id, { isGenerating: true });
+        get().updatePanel(panel.id, { isGenerating: true, imageUrl: undefined });
         const imageUrl = await generateImageWithGemini(panel.visualPrompt);
         get().updatePanel(panel.id, { imageUrl, isGenerating: false });
       } catch (err: unknown) {
