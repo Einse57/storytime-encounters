@@ -39,6 +39,26 @@ export const STYLE_PRESETS: Record<ComicStyle, ComicStylePreset> = {
     promptSuffix: 'master pixel artist, pixel art illustration, crisp pixel definition, retro gaming art.',
     accentColor: 'from-purple-500 to-fuchsia-600',
   },
+  frontier_ink: {
+    id: 'frontier_ink',
+    name: 'Frontier Ink',
+    icon: '🚀',
+    description: 'Gritty sci-fi comic ink, worn metal, dust, and hard frontier lighting.',
+    promptPrefix:
+      'A gritty sci-fi frontier comic panel, worn metal and dust, bold ink, cinematic salvage-yard lighting, expressive characters,',
+    promptSuffix: 'sci-fi comic art, no fantasy castles, no watercolor fairy tale, high quality illustration.',
+    accentColor: 'from-cyan-500 to-slate-700',
+  },
+  pixel_frontier: {
+    id: 'pixel_frontier',
+    name: '16-Bit Starship',
+    icon: '👾',
+    description: 'Retro 16-bit starship and frontier pixel art, not a fantasy RPG.',
+    promptPrefix:
+      'A 16-bit sci-fi pixel art scene of starships, salvage, and dusty frontier tech, crisp pixels, neon cockpit accents,',
+    promptSuffix: 'sci-fi pixel art, retro space game, no swords-and-sorcery, crisp pixel definition.',
+    accentColor: 'from-cyan-400 to-indigo-600',
+  },
 };
 
 /**
@@ -60,12 +80,10 @@ export const parseSessionIntoPanels = (
     ? rawTranscript.split(/(?<=[.!?])\s+/).filter((s) => s.length > 5)
     : [];
 
-  // Setting default values if fields are empty
   const settingText = seed.setting || 'an ancient enchanted land';
   const conflictText = seed.conflict || 'an unexpected mystery calls the party to action';
   const hookText = seed.hook || 'with an untold destiny hanging in the balance';
 
-  // Panel 1: Setting & Beginning
   const panel1Caption = sentences[0] || `Our adventure begins in ${settingText}. ${conflictText}.`;
   panels.push({
     id: `panel-1-${Date.now()}`,
@@ -77,7 +95,6 @@ export const parseSessionIntoPanels = (
     visualPrompt: `${preset.promptPrefix} establishing wide shot of ${settingText}, adventurous atmosphere, ${hookText}, ${preset.promptSuffix}`,
   });
 
-  // Panel 2: The Creature / Encounter
   if (creature) {
     const panel2Caption =
       sentences[1] ||
@@ -103,7 +120,6 @@ export const parseSessionIntoPanels = (
     });
   }
 
-  // Panel 3: The Plot Twist / Dramatic Action
   if (twist) {
     const panel3Caption =
       sentences[2] || `Suddenly, danger strikes! ${twist.title}: ${twist.description}`;
@@ -128,7 +144,6 @@ export const parseSessionIntoPanels = (
     });
   }
 
-  // Panel 4: Loot & Triumph
   if (loot) {
     const panel4Caption =
       sentences[3] ||

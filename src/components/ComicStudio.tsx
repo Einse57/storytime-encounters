@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useComicStore } from '../stores/comicStore';
-import { STYLE_PRESETS, buildMasterGeminiPrompt } from '../utils/promptEngine';
+import { buildMasterGeminiPrompt } from '../utils/promptEngine';
+import {
+  defaultStyleFor,
+  getStylePreset,
+  inferArtSetting,
+  stylesForSetting,
+} from '../utils/artStyles';
 import type { ComicStyle } from '../types/comic';
 import comicSceneDefaultImg from '../assets/comic_scene_default.webp';
 import scifiSceneDefaultImg from '../assets/scifi_scene_default.webp';
 import { useStoryStore } from '../stores/storyStore';
+import { useAudioStore } from '../stores/audioStore';
 
 export const ComicStudio: React.FC = () => {
   const {
@@ -22,10 +29,25 @@ export const ComicStudio: React.FC = () => {
   } = useComicStore();
 
   const currentPackId = useStoryStore((s) => s.currentPackId);
+  const seedSetting = useStoryStore((s) => s.seed.setting);
+  const seedConflict = useStoryStore((s) => s.seed.conflict);
+  const seedHook = useStoryStore((s) => s.seed.hook);
+  const transcript = useAudioStore((s) => s.transcript);
   const isScifi = currentPackId === 'scifi-frontier';
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
-  const currentPreset = STYLE_PRESETS[selectedStyle];
+  const artSetting = inferArtSetting({
+    packId: currentPackId,
+    setting: [seedSetting, seedConflict, seedHook].filter(Boolean).join(' '),
+    transcript,
+  });
+  const offeredStyles = stylesForSetting(artSetting);
+  const currentPreset = getStylePreset(selectedStyle);
+
+  useEffect(() => {
+    if (offeredStyles.includes(selectedStyle)) return;
+    setStyle(defaultStyleFor(artSetting));
+  }, [artSetting, selectedStyle, setStyle, offeredStyles]);
 
   const handleCopyMasterPrompt = () => {
     if (panels.length === 0) return;
@@ -41,7 +63,6 @@ export const ComicStudio: React.FC = () => {
 
   return (
     <div className="space-y-2">
-      {/* Section Header */}
       <div className="flex justify-between items-center px-1">
         <div className="flex items-center gap-2">
           <h3 className={`font-serif font-black text-xs sm:text-sm tracking-tight uppercase ${
@@ -95,7 +116,6 @@ export const ComicStudio: React.FC = () => {
         </p>
       )}
 
-      {/* Main Preview Container */}
       {panels.length === 0 ? (
         <div className={`border border-dashed rounded-xl p-5 text-center space-y-2 ${
           isScifi
@@ -125,11 +145,9 @@ export const ComicStudio: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-2.5">
-          {/* Active Preview Panel Card */}
           <div className={`rounded-xl overflow-hidden shadow-sm border ${
             isScifi ? 'bg-[#1e293b] border-slate-700' : 'bg-[#fcf7ec] border-[#1f2937]'
           }`}>
-            {/* Aspect-Ratio Main Stage */}
             <div className="aspect-[16/9] w-full bg-black relative flex items-center justify-center overflow-hidden">
               {panels[currentPageIndex]?.imageUrl ? (
                 <img
@@ -160,7 +178,6 @@ export const ComicStudio: React.FC = () => {
                 </div>
               )}
 
-              {/* Speech Bubble */}
               {panels[currentPageIndex]?.dialogue && (
                 <div className={`absolute top-2.5 left-2.5 max-w-[80%] rounded-xl px-2.5 py-1 text-xs font-sans font-bold shadow-md border ${
                   isScifi
@@ -177,7 +194,6 @@ export const ComicStudio: React.FC = () => {
               )}
             </div>
 
-            {/* Narrative Story Caption & Navigation */}
             <div className={`p-2.5 space-y-2 ${
               isScifi ? 'bg-[#1e293b]' : 'bg-[#fcf7ec]'
             }`}>
@@ -187,7 +203,6 @@ export const ComicStudio: React.FC = () => {
                 {panels[currentPageIndex]?.caption}
               </p>
 
-              {/* Page Navigator */}
               <div className={`flex justify-between items-center pt-1.5 border-t ${
                 isScifi ? 'border-slate-700' : 'border-amber-200/80'
               }`}>
@@ -240,11 +255,10 @@ export const ComicStudio: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Action Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-1.5 pt-0.5">
             <div className="flex items-center gap-1">
-              {(Object.keys(STYLE_PRESETS) as ComicStyle[]).map((styleKey) => {
-                const preset = STYLE_PRESETS[styleKey];
+              {offeredStyles.map((styleKey: ComicStyle) => {
+                const preset = getStylePreset(styleKey);
                 const isSelected = selectedStyle === styleKey;
                 return (
                   <button

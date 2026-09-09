@@ -1,4 +1,10 @@
-export type ComicStyle = 'comic_book' | 'picture_book' | 'watercolor' | 'pixel_art';
+export type ComicStyle =
+  | 'comic_book'
+  | 'picture_book'
+  | 'watercolor'
+  | 'pixel_art'
+  | 'frontier_ink'
+  | 'pixel_frontier';
 
 export interface StoryPanel {
   id: string;
