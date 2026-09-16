@@ -1,5 +1,26 @@
 import { checkAiRateLimit, getClientIp, TRANSCRIBE_LIMITS } from '../lib/aiRateLimit.js';
 
+function looksLikeMissingAudio(text) {
+  const t = String(text || '').toLowerCase();
+  if (!t.trim()) return true;
+  return (
+    /please (provide|upload|send|attach).{0,40}audio/.test(t) ||
+    /no audio (was )?(provided|detected|found|included)/.test(t) ||
+    /could(n't| not) (hear|find|detect|access).{0,40}(audio|speech|recording)/.test(t) ||
+    /unable to (hear|transcribe|process).{0,40}(audio|speech|recording)/.test(t)
+  );
+}
+
+function extractTranscript(data) {
+  const parts = data?.candidates?.[0]?.content?.parts;
+  if (!Array.isArray(parts)) return '';
+  return parts
+    .map((p) => (typeof p?.text === 'string' ? p.text : ''))
+    .filter(Boolean)
+    .join('\n')
+    .trim();
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
@@ -37,7 +58,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'audioBase64 is required' });
   }
 
-  // Platform body limit is ~4.5MB. Reject before Gemini if the client skipped shrink.
   if (audioBase64.length > 3_400_000) {
     return res.status(413).json({
       error:
@@ -57,44 +77,53 @@ Format the output as a clean, engaging story narrative:
 - Include dialogue with character names if discernable.
 - Capture the imaginative events, actions, and excitement.
 - Keep the tone friendly, adventurous, and fun.
-Output only the transcribed story text.
+Output only the transcribed story text. If the audio contains speech, never ask the user to upload a file.
 ${partNote}`;
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              { text: prompt },
-              {
-                inline_data: {
-                  mime_type: mimeType || 'audio/webm',
-                  data: audioBase64,
+  const models = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+  let lastError = 'No transcription returned by Gemini.';
+
+  for (const model of models) {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                { text: prompt },
+                {
+                  inline_data: {
+                    mime_type: mimeType || 'audio/webm',
+                    data: audioBase64,
+                  },
                 },
-              },
-            ],
-          },
-        ],
-      }),
-    },
-  );
+              ],
+            },
+          ],
+        }),
+      },
+    );
 
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    return res.status(response.status).json({
-      error: err?.error?.message || `API Error: ${response.status} ${response.statusText}`,
-    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      lastError = err?.error?.message || `API Error: ${response.status} ${response.statusText}`;
+      if (response.status === 404 || response.status === 400) continue;
+      return res.status(response.status).json({ error: lastError });
+    }
+
+    const data = await response.json();
+    const transcribedText = extractTranscript(data);
+    if (!transcribedText || looksLikeMissingAudio(transcribedText)) {
+      lastError =
+        'Hosted AI did not hear speech in this recording. Try Enhance again, or edit the Story Log by hand.';
+      continue;
+    }
+
+    return res.status(200).json({ transcript: transcribedText });
   }
 
-  const data = await response.json();
-  const transcribedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!transcribedText) {
-    return res.status(502).json({ error: 'No transcription returned by Gemini.' });
-  }
-
-  return res.status(200).json({ transcript: transcribedText.trim() });
+  return res.status(502).json({ error: lastError });
 }
