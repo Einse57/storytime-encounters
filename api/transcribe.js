@@ -58,7 +58,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'audioBase64 is required' });
   }
 
-  // Platform body limit is ~4.5MB. Reject before Gemini if the client skipped shrink.
   if (audioBase64.length > 3_400_000) {
     return res.status(413).json({
       error:
@@ -96,13 +95,8 @@ ${partNote}`;
               parts: [
                 { text: prompt },
                 {
-                  // REST accepts snake_case; also send camelCase for newer gateways.
                   inline_data: {
                     mime_type: mimeType || 'audio/webm',
-                    data: audioBase64,
-                  },
-                  inlineData: {
-                    mimeType: mimeType || 'audio/webm',
                     data: audioBase64,
                   },
                 },
@@ -116,7 +110,6 @@ ${partNote}`;
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       lastError = err?.error?.message || `API Error: ${response.status} ${response.statusText}`;
-      // Try next model on not-found / unsupported; otherwise surface.
       if (response.status === 404 || response.status === 400) continue;
       return res.status(response.status).json({ error: lastError });
     }
@@ -124,7 +117,8 @@ ${partNote}`;
     const data = await response.json();
     const transcribedText = extractTranscript(data);
     if (!transcribedText || looksLikeMissingAudio(transcribedText)) {
-      lastError = 'Hosted AI did not hear speech in this recording. Try Enhance again, or edit the Story Log by hand.';
+      lastError =
+        'Hosted AI did not hear speech in this recording. Try Enhance again, or edit the Story Log by hand.';
       continue;
     }
 
