@@ -153,7 +153,7 @@ export const parseSessionIntoPanels = (
       panelNumber: panels.length + 1,
       title: `Scene 4: The Discovery of ${loot.name}`,
       caption: panel4Caption,
-      dialogue: `“Incredible... the ${loot.name}! It’s truly wondrous!”',
+      dialogue: `“Incredible... the ${loot.name}! It’s truly wondrous!”`,
       characterName: 'Hero',
       visualPrompt: `${preset.promptPrefix} close-up heroic shot of characters admiring the glowing ${loot.name} (${loot.rarity} ${loot.type}), ${loot.description}, magical sparkling particles, triumphant atmosphere, ${preset.promptSuffix}`,
     });
