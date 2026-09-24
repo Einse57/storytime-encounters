@@ -11,14 +11,12 @@ const COMIC_STORAGE = 'storytime-session-comic-panels';
 interface ComicStore {
   selectedStyle: ComicStyle;
   panels: StoryPanel[];
-  viewMode: 'comic_grid' | 'storybook_page';
   currentPageIndex: number;
   isGeneratingStory: boolean;
   isGeneratingImages: boolean;
   generationError: string | null;
 
   setStyle: (style: ComicStyle) => void;
-  setViewMode: (mode: 'comic_grid' | 'storybook_page') => void;
   setCurrentPageIndex: (index: number) => void;
   generatePanels: () => void;
   updatePanel: (id: string, updates: Partial<StoryPanel>) => void;
@@ -57,7 +55,6 @@ export const useComicStore = create<ComicStore>((set, get) => ({
       return [];
     }
   })(),
-  viewMode: 'comic_grid',
   currentPageIndex: 0,
   isGeneratingStory: false,
   isGeneratingImages: false,
@@ -92,8 +89,6 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     }
   },
 
-  setViewMode: (viewMode) => set({ viewMode }),
-
   setCurrentPageIndex: (currentPageIndex) => set({ currentPageIndex }),
 
   generatePanels: () => {
@@ -120,6 +115,11 @@ export const useComicStore = create<ComicStore>((set, get) => ({
         isGeneratingStory: false,
         generationError: note,
       });
+
+      // Auto-paint after a successful rebuild (sequential; respects Gemini rate limits).
+      if (newPanels.length > 0) {
+        void get().generateAllImages();
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to generate scenes';
       set({ generationError: msg, isGeneratingStory: false });
@@ -159,27 +159,49 @@ export const useComicStore = create<ComicStore>((set, get) => ({
 
   generateAllImages: async () => {
     const { panels } = get();
+    if (panels.length === 0) return;
 
-    set({ isGeneratingImages: true, generationError: null });
+    set({
+      isGeneratingImages: true,
+      generationError: `Painting ${panels.length} scene${panels.length === 1 ? '' : 's'}… old art cleared.`,
+    });
+
+    let painted = 0;
+    let lastError: string | null = null;
 
     for (const panel of panels) {
+      // Stop if panels were rebuilt mid-paint (ids changed).
+      if (!get().panels.some((p) => p.id === panel.id)) break;
+
       try {
         get().updatePanel(panel.id, { isGenerating: true, imageUrl: undefined });
         const imageUrl = await generateImageWithGemini(panel.visualPrompt);
+        const stillThere = get().panels.find((p) => p.id === panel.id);
+        if (!stillThere || stillThere.visualPrompt !== panel.visualPrompt) continue;
         get().updatePanel(panel.id, { imageUrl, isGenerating: false });
+        painted += 1;
+        set({
+          generationError: `Painted ${painted} of ${panels.length}…`,
+        });
       } catch (err: unknown) {
         console.warn(`Panel ${panel.panelNumber} failed:`, err);
         get().updatePanel(panel.id, { isGenerating: false });
-        set({
-          generationError:
-            err instanceof Error
-              ? err.message
-              : 'Hosted AI illustration failed. Try Copy Prompt instead.',
-        });
+        lastError =
+          err instanceof Error
+            ? err.message
+            : 'Hosted AI illustration failed. Try Copy Prompt instead.';
+        set({ generationError: lastError });
       }
     }
 
-    set({ isGeneratingImages: false });
+    set({
+      isGeneratingImages: false,
+      generationError: lastError
+        ? lastError
+        : painted > 0
+          ? `Painted ${painted} scene${painted === 1 ? '' : 's'}.`
+          : null,
+    });
   },
 
   clearPanels: () => {

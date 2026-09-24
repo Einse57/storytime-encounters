@@ -17,12 +17,11 @@ export const ComicStudio: React.FC = () => {
   const {
     selectedStyle,
     panels,
-    viewMode,
     currentPageIndex,
     isGeneratingStory,
+    isGeneratingImages,
     generationError,
     setStyle,
-    setViewMode,
     setCurrentPageIndex,
     generatePanels,
     generateImageForPanel,
@@ -61,6 +60,8 @@ export const ComicStudio: React.FC = () => {
     window.print();
   };
 
+  const rebuildBusy = isGeneratingStory || isGeneratingImages;
+
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center px-1">
@@ -79,30 +80,30 @@ export const ComicStudio: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          {panels.length > 0 && (
-            <button
-              onClick={() => setViewMode(viewMode === 'storybook_page' ? 'comic_grid' : 'storybook_page')}
-              className={`text-[11px] font-bold underline cursor-pointer ${
-                isScifi ? 'text-cyan-400 hover:text-cyan-200' : 'text-amber-900 hover:text-amber-700'
-              }`}
-            >
-              {viewMode === 'storybook_page' ? 'View Strip' : 'View Storybook'}
-            </button>
-          )}
-
-          <button
-            onClick={generatePanels}
-            disabled={isGeneratingStory}
-            className={`btn-tactile font-serif font-bold text-xs py-1 px-3 rounded-lg shadow-xs flex items-center gap-1 cursor-pointer text-white ${
-              isScifi
-                ? 'bg-cyan-700 hover:bg-cyan-600'
-                : 'bg-purple-700 hover:bg-purple-800'
-            }`}
-          >
-            <span>{panels.length > 0 ? 'Rebuild' : 'Build Scenes'}</span>
-          </button>
-        </div>
+        <button
+          onClick={generatePanels}
+          disabled={rebuildBusy}
+          title={
+            panels.length > 0
+              ? 'Rebuild scenes from the story log. Old art is cleared; paintings refresh automatically.'
+              : 'Build scenes from your seeds, sparks, and speech.'
+          }
+          className={`btn-tactile font-serif font-bold text-xs py-1 px-3 rounded-lg shadow-xs flex items-center gap-1 cursor-pointer text-white disabled:opacity-60 disabled:cursor-not-allowed ${
+            isScifi
+              ? 'bg-cyan-700 hover:bg-cyan-600'
+              : 'bg-purple-700 hover:bg-purple-800'
+          }`}
+        >
+          <span>
+            {isGeneratingStory
+              ? 'Building…'
+              : isGeneratingImages
+                ? 'Painting…'
+                : panels.length > 0
+                  ? 'Rebuild scenes'
+                  : 'Build Scenes'}
+          </span>
+        </button>
       </div>
 
       {generationError && (
@@ -134,7 +135,8 @@ export const ComicStudio: React.FC = () => {
           </p>
           <button
             onClick={generatePanels}
-            className={`btn-tactile text-white font-bold text-xs py-1.5 px-4 rounded-lg shadow-xs cursor-pointer ${
+            disabled={rebuildBusy}
+            className={`btn-tactile text-white font-bold text-xs py-1.5 px-4 rounded-lg shadow-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
               isScifi
                 ? 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500'
                 : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
@@ -170,7 +172,8 @@ export const ComicStudio: React.FC = () => {
                   <div className="absolute bottom-2 right-2">
                     <button
                       onClick={() => generateImageForPanel(panels[currentPageIndex].id)}
-                      className="btn-tactile bg-gray-950/80 hover:bg-purple-700 text-white text-[10px] font-bold py-1 px-2.5 rounded-md shadow-sm backdrop-blur-xs cursor-pointer"
+                      disabled={isGeneratingImages}
+                      className="btn-tactile bg-gray-950/80 hover:bg-purple-700 text-white text-[10px] font-bold py-1 px-2.5 rounded-md shadow-sm backdrop-blur-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       AI Paint
                     </button>
