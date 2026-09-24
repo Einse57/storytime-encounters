@@ -44,7 +44,7 @@ export function buildScenesFromSession(
   if (chunks.length === 0) {
     return {
       panels: parseSessionIntoPanels(transcript, seed, loot, creature, twist, style),
-      note: 'Story Log is empty, so Rebuild only used seeds and sparks. Add what you said or typed, then Rebuild again.',
+      note: 'Story Log is empty, so Rebuild only used seeds and sparks. Old art cleared — paintings will refresh automatically. Add what you said or typed, then Rebuild scenes again for a fuller story.',
     };
   }
 
@@ -73,6 +73,6 @@ export function buildScenesFromSession(
 
   return {
     panels,
-    note: `Rebuilt ${panels.length} scenes from the story log. Paintings cleared \u2014 tap AI Paint to match the new scenes.`,
+    note: `Rebuilt ${panels.length} scenes from the story log. Old art cleared — paintings will refresh automatically.`,
   };
 }
