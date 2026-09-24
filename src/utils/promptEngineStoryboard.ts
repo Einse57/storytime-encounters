@@ -52,7 +52,7 @@ export const buildAllScenesStoryboardPrompt = (
 
 /**
  * Generate an image via the hosted /api/illustrate serverless proxy.
- * Surfaces app soft RATE_LIMIT (8/day, 2/min) separately from Google quota/exhausted errors.
+ * Surfaces app soft RATE_LIMIT (20/day, 2/min) separately from Google quota/exhausted errors.
  */
 export const generateImageWithGemini = async (prompt: string): Promise<string> => {
   const response = await fetch('/api/illustrate', {
@@ -73,7 +73,7 @@ export const generateImageWithGemini = async (prompt: string): Promise<string> =
   if (!response.ok) {
     if (data?.code === 'RATE_LIMIT') {
       // Our soft ILLUSTRATE ceiling — already a clear human message from the API.
-      throw new Error(data.error || 'Daily AI paints used up — try again tomorrow, or use Copy Prompt.');
+      throw new Error(data.error || 'App daily AI paint limit reached — try again tomorrow, or use Copy Prompt.');
     }
     if (data?.code === 'GOOGLE_QUOTA' || data?.code === 'GOOGLE_API_ERROR') {
       const tier = data.quotaTier ? ` [${data.quotaTier}]` : '';
