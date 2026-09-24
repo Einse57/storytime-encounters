@@ -1,19 +1,19 @@
 import { create } from 'zustand';
 import type { ComicStyle, StoryPanel } from '../types/comic';
-import { buildHeroImagePrompt, generateImageWithGemini } from '../utils/promptEngine';
+import { buildAllScenesStoryboardPrompt, generateImageWithGemini } from '../utils/promptEngine';
 import { getStylePreset, inferArtSetting, isStyleAllowed } from '../utils/artStyles';
 import { buildScenesFromSession } from '../utils/rebuildScenes';
 import { useStoryStore } from './storyStore';
 import { useAudioStore } from './audioStore';
 
 const COMIC_STORAGE = 'storytime-session-comic-panels';
-const HERO_STORAGE = 'storytime-session-comic-hero';
+const STORYBOARD_STORAGE = 'storytime-session-comic-storyboard';
 
 interface ComicStore {
   selectedStyle: ComicStyle;
   panels: StoryPanel[];
-  /** Single story-level painting from the full transcript (quota-friendly). */
-  heroImageUrl: string | null;
+  /** One multi-panel storyboard image of every scene (quota-friendly single gen). */
+  storyboardImageUrl: string | null;
   currentPageIndex: number;
   isGeneratingStory: boolean;
   isGeneratingImages: boolean;
@@ -23,7 +23,7 @@ interface ComicStore {
   setCurrentPageIndex: (index: number) => void;
   generatePanels: () => void;
   updatePanel: (id: string, updates: Partial<StoryPanel>) => void;
-  generateHeroImage: () => Promise<void>;
+  generateAllScenesImage: () => Promise<void>;
   generateImageForPanel: (panelId: string) => Promise<void>;
   /** Optional multi-panel paint — not used by Build/Rebuild (quota). */
   generateAllImages: () => Promise<void>;
@@ -34,17 +34,17 @@ function persistPanels(panels: StoryPanel[]) {
   localStorage.setItem(COMIC_STORAGE, JSON.stringify(panels));
 }
 
-function persistHero(heroImageUrl: string | null) {
-  if (heroImageUrl) {
-    localStorage.setItem(HERO_STORAGE, heroImageUrl);
+function persistStoryboard(storyboardImageUrl: string | null) {
+  if (storyboardImageUrl) {
+    localStorage.setItem(STORYBOARD_STORAGE, storyboardImageUrl);
   } else {
-    localStorage.removeItem(HERO_STORAGE);
+    localStorage.removeItem(STORYBOARD_STORAGE);
   }
 }
 
-function loadHero(): string | null {
+function loadStoryboard(): string | null {
   try {
-    return localStorage.getItem(HERO_STORAGE);
+    return localStorage.getItem(STORYBOARD_STORAGE);
   } catch {
     return null;
   }
@@ -76,7 +76,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
       return [];
     }
   })(),
-  heroImageUrl: loadHero(),
+  storyboardImageUrl: loadStoryboard(),
   currentPageIndex: 0,
   isGeneratingStory: false,
   isGeneratingImages: false,
@@ -96,19 +96,19 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     }));
 
     persistPanels(updatedPanels);
-    persistHero(null);
+    persistStoryboard(null);
     const styleName = preset.name.split('/')[0].trim();
     set({
       selectedStyle,
       panels: updatedPanels,
-      heroImageUrl: null,
+      storyboardImageUrl: null,
       generationError: panels.length
-        ? `Dropped the old painting. Rendering the story as ${styleName}…`
+        ? `Dropped the old painting. Painting all scenes as ${styleName}…`
         : null,
     });
 
     if (panels.length > 0) {
-      void get().generateHeroImage();
+      void get().generateAllScenesImage();
     }
   },
 
@@ -132,18 +132,18 @@ export const useComicStore = create<ComicStore>((set, get) => ({
       );
 
       persistPanels(newPanels);
-      persistHero(null);
+      persistStoryboard(null);
       set({
         panels: newPanels,
-        heroImageUrl: null,
+        storyboardImageUrl: null,
         currentPageIndex: 0,
         isGeneratingStory: false,
         generationError: note,
       });
 
-      // One hero paint from the full story — not one gen per scene (Gemini quota).
+      // One storyboard of all scenes — not N gens, not a transcript-only hero splash.
       if (newPanels.length > 0) {
-        void get().generateHeroImage();
+        void get().generateAllScenesImage();
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to generate scenes';
@@ -158,35 +158,33 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     set({ panels: updated });
   },
 
-  generateHeroImage: async () => {
+  generateAllScenesImage: async () => {
     const { selectedStyle, panels } = get();
     if (panels.length === 0) return;
 
     const storyState = useStoryStore.getState();
-    const audioState = useAudioStore.getState();
-    const prompt = buildHeroImagePrompt(
+    const prompt = buildAllScenesStoryboardPrompt(
       selectedStyle,
-      audioState.transcript,
-      storyState.seed,
       panels,
+      storyState.seed,
     );
 
     set({
       isGeneratingImages: true,
-      heroImageUrl: null,
-      generationError: 'Painting one story image from the whole transcript… old art cleared.',
+      storyboardImageUrl: null,
+      generationError: `Painting all ${panels.length} scenes into one storyboard… old art cleared.`,
     });
-    persistHero(null);
+    persistStoryboard(null);
 
     try {
       const imageUrl = await generateImageWithGemini(prompt);
       // Abort if panels were rebuilt while we were painting.
       if (get().panels.length === 0 || get().panels[0]?.id !== panels[0]?.id) return;
-      persistHero(imageUrl);
+      persistStoryboard(imageUrl);
       set({
-        heroImageUrl: imageUrl,
+        storyboardImageUrl: imageUrl,
         isGeneratingImages: false,
-        generationError: 'Painted one story image.',
+        generationError: `Painted all ${panels.length} scenes as one storyboard.`,
       });
     } catch (err: unknown) {
       const msg =
@@ -195,7 +193,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
           : 'Hosted AI illustration failed. Try Copy Prompt instead.';
       set({
         isGeneratingImages: false,
-        heroImageUrl: null,
+        storyboardImageUrl: null,
         generationError: msg,
       });
     }
@@ -274,10 +272,12 @@ export const useComicStore = create<ComicStore>((set, get) => ({
 
   clearPanels: () => {
     localStorage.removeItem(COMIC_STORAGE);
-    localStorage.removeItem(HERO_STORAGE);
+    localStorage.removeItem(STORYBOARD_STORAGE);
+    // Drop legacy hero key from the prior splash direction.
+    localStorage.removeItem('storytime-session-comic-hero');
     set({
       panels: [],
-      heroImageUrl: null,
+      storyboardImageUrl: null,
       currentPageIndex: 0,
       generationError: null,
     });
