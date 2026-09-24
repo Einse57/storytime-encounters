@@ -1,16 +1,19 @@
 import { create } from 'zustand';
 import type { ComicStyle, StoryPanel } from '../types/comic';
-import { generateImageWithGemini } from '../utils/promptEngine';
+import { buildAllScenesStoryboardPrompt, generateImageWithGemini } from '../utils/promptEngine';
 import { getStylePreset, inferArtSetting, isStyleAllowed } from '../utils/artStyles';
 import { buildScenesFromSession } from '../utils/rebuildScenes';
 import { useStoryStore } from './storyStore';
 import { useAudioStore } from './audioStore';
 
 const COMIC_STORAGE = 'storytime-session-comic-panels';
+const STORYBOARD_STORAGE = 'storytime-session-comic-storyboard';
 
 interface ComicStore {
   selectedStyle: ComicStyle;
   panels: StoryPanel[];
+  /** One multi-panel storyboard image of every scene (quota-friendly single gen). */
+  storyboardImageUrl: string | null;
   currentPageIndex: number;
   isGeneratingStory: boolean;
   isGeneratingImages: boolean;
@@ -20,13 +23,31 @@ interface ComicStore {
   setCurrentPageIndex: (index: number) => void;
   generatePanels: () => void;
   updatePanel: (id: string, updates: Partial<StoryPanel>) => void;
+  generateAllScenesImage: () => Promise<void>;
   generateImageForPanel: (panelId: string) => Promise<void>;
+  /** Optional multi-panel paint — not used by Build/Rebuild (quota). */
   generateAllImages: () => Promise<void>;
   clearPanels: () => void;
 }
 
 function persistPanels(panels: StoryPanel[]) {
   localStorage.setItem(COMIC_STORAGE, JSON.stringify(panels));
+}
+
+function persistStoryboard(storyboardImageUrl: string | null) {
+  if (storyboardImageUrl) {
+    localStorage.setItem(STORYBOARD_STORAGE, storyboardImageUrl);
+  } else {
+    localStorage.removeItem(STORYBOARD_STORAGE);
+  }
+}
+
+function loadStoryboard(): string | null {
+  try {
+    return localStorage.getItem(STORYBOARD_STORAGE);
+  } catch {
+    return null;
+  }
 }
 
 function currentArtSetting() {
@@ -55,6 +76,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
       return [];
     }
   })(),
+  storyboardImageUrl: loadStoryboard(),
   currentPageIndex: 0,
   isGeneratingStory: false,
   isGeneratingImages: false,
@@ -64,7 +86,7 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     if (selectedStyle === get().selectedStyle) return;
     if (!isStyleAllowed(selectedStyle, currentArtSetting())) return;
 
-    const { panels, currentPageIndex } = get();
+    const { panels } = get();
     const preset = getStylePreset(selectedStyle);
     const updatedPanels = panels.map((p) => ({
       ...p,
@@ -74,18 +96,19 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     }));
 
     persistPanels(updatedPanels);
-    const current = updatedPanels[currentPageIndex];
+    persistStoryboard(null);
     const styleName = preset.name.split('/')[0].trim();
     set({
       selectedStyle,
       panels: updatedPanels,
-      generationError: current
-        ? `Dropped the old painting. Rendering this scene as ${styleName}…`
+      storyboardImageUrl: null,
+      generationError: panels.length
+        ? `Dropped the old painting. Painting all scenes as ${styleName}…`
         : null,
     });
 
-    if (current) {
-      void get().generateImageForPanel(current.id);
+    if (panels.length > 0) {
+      void get().generateAllScenesImage();
     }
   },
 
@@ -109,16 +132,18 @@ export const useComicStore = create<ComicStore>((set, get) => ({
       );
 
       persistPanels(newPanels);
+      persistStoryboard(null);
       set({
         panels: newPanels,
+        storyboardImageUrl: null,
         currentPageIndex: 0,
         isGeneratingStory: false,
         generationError: note,
       });
 
-      // Auto-paint after a successful rebuild (sequential; respects Gemini rate limits).
+      // One storyboard of all scenes — not N gens, not a transcript-only hero splash.
       if (newPanels.length > 0) {
-        void get().generateAllImages();
+        void get().generateAllScenesImage();
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to generate scenes';
@@ -131,6 +156,47 @@ export const useComicStore = create<ComicStore>((set, get) => ({
     const updated = panels.map((p) => (p.id === id ? { ...p, ...updates } : p));
     persistPanels(updated);
     set({ panels: updated });
+  },
+
+  generateAllScenesImage: async () => {
+    const { selectedStyle, panels } = get();
+    if (panels.length === 0) return;
+
+    const storyState = useStoryStore.getState();
+    const prompt = buildAllScenesStoryboardPrompt(
+      selectedStyle,
+      panels,
+      storyState.seed,
+    );
+
+    set({
+      isGeneratingImages: true,
+      storyboardImageUrl: null,
+      generationError: `Painting all ${panels.length} scenes into one storyboard… old art cleared.`,
+    });
+    persistStoryboard(null);
+
+    try {
+      const imageUrl = await generateImageWithGemini(prompt);
+      // Abort if panels were rebuilt while we were painting.
+      if (get().panels.length === 0 || get().panels[0]?.id !== panels[0]?.id) return;
+      persistStoryboard(imageUrl);
+      set({
+        storyboardImageUrl: imageUrl,
+        isGeneratingImages: false,
+        generationError: `Painted all ${panels.length} scenes as one storyboard.`,
+      });
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'Hosted AI illustration failed. Try Copy Prompt instead.';
+      set({
+        isGeneratingImages: false,
+        storyboardImageUrl: null,
+        generationError: msg,
+      });
+    }
   },
 
   generateImageForPanel: async (panelId: string) => {
@@ -206,8 +272,12 @@ export const useComicStore = create<ComicStore>((set, get) => ({
 
   clearPanels: () => {
     localStorage.removeItem(COMIC_STORAGE);
+    localStorage.removeItem(STORYBOARD_STORAGE);
+    // Drop legacy hero key from the prior splash direction.
+    localStorage.removeItem('storytime-session-comic-hero');
     set({
       panels: [],
+      storyboardImageUrl: null,
       currentPageIndex: 0,
       generationError: null,
     });

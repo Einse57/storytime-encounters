@@ -17,6 +17,7 @@ export const ComicStudio: React.FC = () => {
   const {
     selectedStyle,
     panels,
+    storyboardImageUrl,
     currentPageIndex,
     isGeneratingStory,
     isGeneratingImages,
@@ -61,6 +62,15 @@ export const ComicStudio: React.FC = () => {
   };
 
   const rebuildBusy = isGeneratingStory || isGeneratingImages;
+  const isRateLimited =
+    typeof generationError === 'string' &&
+    (/rate limit|daily ai paints|try again tomorrow|wait a moment|google image quota|resource.?exhausted|quota\/exhausted|free_tier|paid_tier/i.test(
+      generationError,
+    ));
+
+  const previewImageUrl = storyboardImageUrl || panels[currentPageIndex]?.imageUrl;
+  const previewGenerating =
+    isGeneratingImages || Boolean(panels[currentPageIndex]?.isGenerating);
 
   return (
     <div className="space-y-2">
@@ -85,8 +95,8 @@ export const ComicStudio: React.FC = () => {
           disabled={rebuildBusy}
           title={
             panels.length > 0
-              ? 'Rebuild scenes from the story log. Old art is cleared; paintings refresh automatically.'
-              : 'Build scenes from your seeds, sparks, and speech.'
+              ? 'Rebuild scenes from the story log and paint every scene into one storyboard image. Old art is cleared.'
+              : 'Build scenes and paint every scene into one multi-panel storyboard (one Gemini call).'
           }
           className={`btn-tactile font-serif font-bold text-xs py-1 px-3 rounded-lg shadow-xs flex items-center gap-1 cursor-pointer text-white disabled:opacity-60 disabled:cursor-not-allowed ${
             isScifi
@@ -100,8 +110,8 @@ export const ComicStudio: React.FC = () => {
               : isGeneratingImages
                 ? 'Painting…'
                 : panels.length > 0
-                  ? 'Rebuild scenes'
-                  : 'Build Scenes'}
+                  ? 'Rebuild & Paint all scenes'
+                  : 'Paint all scenes'}
           </span>
         </button>
       </div>
@@ -109,11 +119,17 @@ export const ComicStudio: React.FC = () => {
       {generationError && (
         <p
           className={`text-[11px] font-serif px-1 leading-snug ${
-            isScifi ? 'text-cyan-200/90' : 'text-amber-950/80'
+            isRateLimited
+              ? isScifi
+                ? 'text-amber-200'
+                : 'text-rose-800'
+              : isScifi
+                ? 'text-cyan-200/90'
+                : 'text-amber-950/80'
           }`}
           role="status"
         >
-          {generationError}
+          {isRateLimited ? `⏳ ${generationError}` : generationError}
         </p>
       )}
 
@@ -131,7 +147,8 @@ export const ComicStudio: React.FC = () => {
           <p className={`text-xs max-w-xs mx-auto ${
             isScifi ? 'text-slate-300' : 'text-gray-600'
           }`}>
-            Tap <strong>Build Scenes</strong> to transform your seeds, sparks, and speech into illustrated story panels.
+            Tap <strong>Paint all scenes</strong> to turn seeds, sparks, and speech into scenes and{' '}
+            <strong>one</strong> multi-panel storyboard image (saves Gemini quota).
           </p>
           <button
             onClick={generatePanels}
@@ -142,7 +159,7 @@ export const ComicStudio: React.FC = () => {
                 : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
             }`}
           >
-            Build Scenes Now
+            Paint all scenes Now
           </button>
         </div>
       ) : (
@@ -151,15 +168,17 @@ export const ComicStudio: React.FC = () => {
             isScifi ? 'bg-[#1e293b] border-slate-700' : 'bg-[#fcf7ec] border-[#1f2937]'
           }`}>
             <div className="aspect-[16/9] w-full bg-black relative flex items-center justify-center overflow-hidden">
-              {panels[currentPageIndex]?.imageUrl ? (
+              {previewImageUrl ? (
                 <img
-                  src={panels[currentPageIndex].imageUrl}
-                  alt={panels[currentPageIndex].title}
+                  src={previewImageUrl}
+                  alt={storyboardImageUrl ? 'All-scenes storyboard' : panels[currentPageIndex].title}
                   className="w-full h-full object-cover"
                 />
-              ) : panels[currentPageIndex]?.isGenerating ? (
+              ) : previewGenerating ? (
                 <div className="flex flex-col items-center gap-2 text-purple-300 animate-pulse p-4">
-                  <span className="text-xs font-semibold">Creating Art with Gemini...</span>
+                  <span className="text-xs font-semibold">
+                    Painting all scenes into one storyboard with Gemini…
+                  </span>
                 </div>
               ) : (
                 <div className="relative w-full h-full">
@@ -173,9 +192,10 @@ export const ComicStudio: React.FC = () => {
                     <button
                       onClick={() => generateImageForPanel(panels[currentPageIndex].id)}
                       disabled={isGeneratingImages}
+                      title="Optional: paint only this scene (uses extra quota)"
                       className="btn-tactile bg-gray-950/80 hover:bg-purple-700 text-white text-[10px] font-bold py-1 px-2.5 rounded-md shadow-sm backdrop-blur-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      AI Paint
+                      AI Paint scene
                     </button>
                   </div>
                 </div>
