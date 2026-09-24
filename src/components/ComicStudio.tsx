@@ -64,7 +64,7 @@ export const ComicStudio: React.FC = () => {
   const rebuildBusy = isGeneratingStory || isGeneratingImages;
   const isRateLimited =
     typeof generationError === 'string' &&
-    (/rate limit|daily ai paints|try again tomorrow|wait a moment|google image quota|resource.?exhausted|quota\/exhausted|free_tier|paid_tier/i.test(
+    (/rate limit|app daily|app minute|daily ai paints|try again tomorrow|wait a moment|google image quota|resource.?exhausted|quota\/exhausted|free_tier|paid_tier/i.test(
       generationError,
     ));
 
