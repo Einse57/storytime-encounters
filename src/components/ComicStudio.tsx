@@ -201,7 +201,8 @@ export const ComicStudio: React.FC = () => {
                 </div>
               )}
 
-              {panels[currentPageIndex]?.dialogue && (
+              {/* Comic bubble only on placeholder art — never cover a painted storyboard/panel. */}
+              {panels[currentPageIndex]?.dialogue && !previewImageUrl && (
                 <div className={`absolute top-2.5 left-2.5 max-w-[80%] rounded-xl px-2.5 py-1 text-xs font-sans font-bold shadow-md border ${
                   isScifi
                     ? 'bg-slate-900/95 text-slate-100 border-cyan-400/80'
@@ -225,6 +226,28 @@ export const ComicStudio: React.FC = () => {
               }`}>
                 {panels[currentPageIndex]?.caption}
               </p>
+
+              {/* Relocate STORY / dialogue off the painted image so storyboard panels stay visible. */}
+              {previewImageUrl && panels[currentPageIndex]?.dialogue && (
+                <details
+                  className={`rounded-lg border px-2.5 py-1.5 ${
+                    isScifi
+                      ? 'bg-slate-900/80 border-slate-600 text-slate-100'
+                      : 'bg-white/90 border-amber-300 text-gray-900'
+                  }`}
+                >
+                  <summary
+                    className={`cursor-pointer text-[9px] font-black uppercase tracking-wide list-none [&::-webkit-details-marker]:hidden ${
+                      isScifi ? 'text-cyan-400' : 'text-purple-700'
+                    }`}
+                  >
+                    {panels[currentPageIndex].characterName || 'Story'} · tap for transcript
+                  </summary>
+                  <p className="mt-1.5 text-xs font-sans font-semibold leading-snug">
+                    {panels[currentPageIndex].dialogue}
+                  </p>
+                </details>
+              )}
 
               <div className={`flex justify-between items-center pt-1.5 border-t ${
                 isScifi ? 'border-slate-700' : 'border-amber-200/80'
